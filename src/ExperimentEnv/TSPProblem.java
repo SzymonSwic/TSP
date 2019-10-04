@@ -5,24 +5,24 @@ import java.util.ArrayList;
 public class TSPProblem {
 
     private String name, comment;
-    private int dimensions;
+    private static int dimensions;
     private ArrayList<City> cities;
     private static double[][] neighborhoodMatrix;
 
-    public TSPProblem(String name, String comment, int dimensions, ArrayList<City> cities) {
+    public TSPProblem(String name, String comment, int dims, ArrayList<City> cities) {
         this.name = name;
         this.comment = comment;
-        this.dimensions = dimensions;
         this.cities = cities;
+        dimensions = dims;
         neighborhoodMatrix = makeMatrix(cities);
     }
 
 
     //    making matrix
     private double[][] makeMatrix(ArrayList<City> src) {
-        double[][] matrix = new double[this.dimensions][this.dimensions];
-        for (int row = 0; row < this.dimensions; row++) {
-            for (int col = 0; col < this.dimensions; col++) {
+        double[][] matrix = new double[dimensions][dimensions];
+        for (int row = 0; row < dimensions; row++) {
+            for (int col = 0; col < dimensions; col++) {
                 matrix[row][col] = getDistanceBetween(src.get(row), src.get(col));
             }
         }
@@ -43,7 +43,7 @@ public class TSPProblem {
         return comment;
     }
 
-    public int getDimensions() {
+    public static int getDimensions() {
         return dimensions;
     }
 
@@ -56,8 +56,8 @@ public class TSPProblem {
     }
 
     public void displayMatrix() {
-        for (int row = 0; row < this.dimensions; row++) {
-            for (int col = 0; col < this.dimensions; col++) {
+        for (int row = 0; row < dimensions; row++) {
+            for (int col = 0; col < dimensions; col++) {
                 System.out.print(neighborhoodMatrix[row][col] + " | ");
             }
             System.out.println();
@@ -67,11 +67,10 @@ public class TSPProblem {
     public void displayTSPProblem() {
         System.out.println("Name: " + this.name);
         System.out.println("Comment: " + this.comment);
-        System.out.println("Dimensions: " + this.dimensions);
+        System.out.println("Dimensions: " + dimensions);
         System.out.println("Cities: ");
         for (City c : this.cities) {
             System.out.println(c);
         }
-
     }
 }

@@ -6,6 +6,10 @@ public class Indiv {
     private ArrayList<Integer> route;
     private double routeLength;
 
+    public Indiv(ArrayList<Integer> route) {
+        this.route = route;
+        updateRouteLength();
+    }
 
     private void updateRouteLength() {
         this.routeLength = 0.0;
@@ -16,11 +20,28 @@ public class Indiv {
         }
     }
 
+    public void mutate(){
+        //TODO
+    }
+
+    public Indiv crossover(Indiv parent){
+        //TODO
+        return parent;
+    }
+
     public ArrayList<Integer> getRoute() {
         return route;
     }
 
     public double getRouteLength() {
         return routeLength;
+    }
+
+    public String toString(){
+        StringBuilder builder = new StringBuilder();
+        for(int i: route){
+            builder.append(i).append(" ");
+        }
+        return builder.toString();
     }
 }
