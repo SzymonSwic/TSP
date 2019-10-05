@@ -2,7 +2,7 @@ package ExperimentEnv;
 
 import java.util.ArrayList;
 
-public class Indiv {
+public class Indiv implements Comparable<Indiv>{
     private ArrayList<Integer> route;
     private double routeLength;
 
@@ -43,5 +43,10 @@ public class Indiv {
             builder.append(i).append(" ");
         }
         return builder.toString();
+    }
+
+    @Override
+    public int compareTo(Indiv o) {
+        return (int) (o.routeLength - this.routeLength);
     }
 }

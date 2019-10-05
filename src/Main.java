@@ -5,8 +5,10 @@ import ExperimentEnv.TSPProblemCreator;
 public class Main {
 
     public static void main(String[] args) {
-        TSPProblemCreator creator = new TSPProblemCreator("TSP/berlin52.tsp");
+        TSPProblemCreator creator = new TSPProblemCreator("TSP/berlin11_modified.tsp");
         TSPProblem tspProblem = creator.create();
-        Population pop = new Population(10);
+
+        Algorithm algorithm = new Algorithm();
+        algorithm.start();
     }
 }
