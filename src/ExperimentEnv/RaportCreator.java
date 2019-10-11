@@ -66,7 +66,12 @@ public class RaportCreator {
         }
 
         public String toString(){
-            return this.popNumber+", "+this.worstScore+", "+this.bestScore+", "+this.avgScore;
+            StringBuilder builder = new StringBuilder();
+            builder.append(this.popNumber).append(",");
+            builder.append(this.worstScore).append(",");
+            builder.append(this.bestScore).append(",");
+            builder.append(this.avgScore);
+            return builder.toString();
         }
     }
 }

@@ -17,8 +17,6 @@ public class TSPProblem {
         neighborhoodMatrix = makeMatrix(cities);
     }
 
-
-    //    making matrix
     private double[][] makeMatrix(ArrayList<City> src) {
         double[][] matrix = new double[dimensions][dimensions];
         for (int row = 0; row < dimensions; row++) {

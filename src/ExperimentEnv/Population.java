@@ -30,4 +30,8 @@ public class Population {
         //TODO
         return indivs;
     }
+
+    public ArrayList<Indiv> getIndivs() {
+        return indivs;
+    }
 }
