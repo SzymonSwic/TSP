@@ -39,8 +39,6 @@ public class Indiv implements Comparable<Indiv> {
     public Indiv[] crossoverPMX(Indiv par2) {
         Random r = new Random();
         int sep = r.nextInt(route.size() - 1);
-        System.out.println("CROSSOVER");
-        System.out.println("SEP = "+sep);
 
         Integer[] parent1 = route.toArray(new Integer[0]);
         Integer[] parent2 = par2.route.toArray(new Integer[0]);
@@ -72,7 +70,11 @@ public class Indiv implements Comparable<Indiv> {
         return route;
     }
 
-    public double getRouteLength() {
+    public double getFitness(){
+        return getRouteLength();
+    }
+
+    private double getRouteLength() {
         return routeLength;
     }
 

@@ -20,6 +20,7 @@ public class RaportCreator {
         experimentResult.add(getScores(population));
     }
 
+    //TODO zmien liczenie sredniej!!!!!!!
     private SinglePopulationScore getScores(Population population) {
         Indiv best = population.indivs.get(0);
         Indiv worst = best;

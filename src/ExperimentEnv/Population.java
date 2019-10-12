@@ -1,5 +1,7 @@
 package ExperimentEnv;
 
+import MyUtils.Utils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -16,6 +18,10 @@ public class Population {
         this.indivs = indivs;
     }
 
+    public Population(){
+        this.indivs = new ArrayList<>();
+    }
+
     private void initRandomGeneration(int size) {
         this.indivs = new ArrayList<>();
         ArrayList<Integer> newRoute = IntStream.rangeClosed(0, TSPProblem.getDimensions()-1)
@@ -26,12 +32,27 @@ public class Population {
         }
     }
 
-    public ArrayList<Indiv> selecion() {
-        //TODO
-        return indivs;
+    public Indiv selecionTournament(int tournamentSize) {
+        Indiv best = indivs.get(Utils.getRandomInt(0, indivs.size()-1));
+        for(int i=0; i<tournamentSize; i++){
+            Indiv opponent = indivs.get(Utils.getRandomInt(0, indivs.size()-1));
+            if(best.getFitness() > opponent.getFitness())
+                best = opponent;
+        }
+        return best;
     }
 
     public ArrayList<Indiv> getIndivs() {
         return indivs;
+    }
+
+    public int getTournamentWinnerIndex(int tournamentSize){
+        return indivs.indexOf(selecionTournament(tournamentSize));
+    }
+
+    public void tryCrossover(int parent1, int parent2, double chance){
+        if(Utils.drawDecision(chance)){
+
+        }
     }
 }
