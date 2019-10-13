@@ -28,7 +28,7 @@ public class Population {
                                 .boxed().collect(Collectors.toCollection(ArrayList::new));
         for (int i = 0; i < size; i++) {
             Collections.shuffle(newRoute);
-            indivs.add(new Indiv(newRoute));
+            indivs.add(new Indiv(Utils.makeDeepCopyInteger(newRoute)));
         }
     }
 
@@ -50,9 +50,25 @@ public class Population {
         return indivs.indexOf(selecionTournament(tournamentSize));
     }
 
-    public void tryCrossover(int parent1, int parent2, double chance){
+    public void tryCrossover(Population parentPopulation, int parent1, int parent2, double chance){
         if(Utils.drawDecision(chance)){
-
+            Indiv[] children = parentPopulation.getIndivs().get(parent1).crossoverPMX(parentPopulation.getIndivs().get(parent2));
+            this.indivs.set(parent1, children[0]);
+            this.indivs.set(parent2, children[1]);
         }
+    }
+
+    public void tryMutation(int indivIndex, double chance){
+        if(Utils.drawDecision(chance)){
+            indivs.get(indivIndex).mutationPair();
+        }
+    }
+
+    public Population copy(){
+        Population populationClone = new Population();
+        for(Indiv ind: indivs){
+            populationClone.getIndivs().add(ind);
+        }
+        return populationClone;
     }
 }

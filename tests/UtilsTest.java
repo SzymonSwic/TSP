@@ -28,7 +28,7 @@ public class UtilsTest {
             System.out.println(ind);
         }
 
-        System.out.println(indivs.get(0).getRouteLength());
+        System.out.println(indivs.get(0).getFitness());
 
 //        Assert.assertEquals(indivs.get(0).getRouteLength(), 3731);
 

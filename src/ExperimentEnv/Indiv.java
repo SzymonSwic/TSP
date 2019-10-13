@@ -96,4 +96,10 @@ public class Indiv implements Comparable<Indiv> {
         array[ind1] = array[ind2];
         array[ind2] = buff;
     }
+
+    public ArrayList<Integer> copyRoute(){
+        ArrayList<Integer> copy = new ArrayList<>(0);
+        copy.addAll(this.route);
+        return copy;
+    }
 }

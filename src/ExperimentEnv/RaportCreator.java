@@ -9,6 +9,7 @@ public class RaportCreator {
 
     ArrayList<SinglePopulationScore> experimentResult;
     int populationCounter;
+    private static int raportCounter = 0;
 
     public RaportCreator() {
         this.experimentResult = new ArrayList<>();
@@ -20,7 +21,6 @@ public class RaportCreator {
         experimentResult.add(getScores(population));
     }
 
-    //TODO zmien liczenie sredniej!!!!!!!
     private SinglePopulationScore getScores(Population population) {
         Indiv best = population.indivs.get(0);
         Indiv worst = best;
@@ -31,21 +31,30 @@ public class RaportCreator {
             else if (indiv.compareTo(worst) < 0)
                 worst = indiv;
         }
-        double avg = (best.getRouteLength()+worst.getRouteLength())/2;
+        double avg = countAvg(population);
 
-        return new SinglePopulationScore(this.populationCounter, worst.getRouteLength(), best.getRouteLength(), avg);
+        return new SinglePopulationScore(this.populationCounter, best.getFitness(), avg, worst.getFitness());
     }
 
-    public void showResults(){
+    private double countAvg(Population population) {
+        double counter = 0;
+        for (Indiv i : population.getIndivs()) {
+            counter += i.getFitness();
+        }
+        return counter / population.getIndivs().size();
+    }
+
+    public void showResults() {
         System.out.println("Nr worst   -  best   -  average");
-        for( SinglePopulationScore score: experimentResult){
+        for (SinglePopulationScore score : experimentResult) {
             System.out.println(score);
         }
     }
 
-    public void createResultFile(){
-        File file = new File("results/raport.csv");
-        try (PrintWriter pw = new PrintWriter(file)){
+    public void createResultFile() {
+        raportCounter++;
+        File file = new File("results/raport" + raportCounter + ".csv");
+        try (PrintWriter pw = new PrintWriter(file)) {
             this.experimentResult
                     .stream()
                     .map(SinglePopulationScore::toString)
@@ -66,7 +75,7 @@ public class RaportCreator {
             this.avgScore = avgScore;
         }
 
-        public String toString(){
+        public String toString() {
             StringBuilder builder = new StringBuilder();
             builder.append(this.popNumber).append(",");
             builder.append(this.worstScore).append(",");
