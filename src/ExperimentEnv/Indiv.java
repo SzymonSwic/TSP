@@ -58,7 +58,7 @@ public class Indiv implements Comparable<Indiv> {
         for (int i = 0; i < sep; i++) {
             int toSwap = parent2[i];
             boolean valNotFound = true;
-            for (int j = 0; j < parent1.length && valNotFound; j++) {
+            for (int j = i; j < parent1.length && valNotFound; j++) {
                 if(parent1[j] == toSwap){
                     swap(child, j, i);
                     valNotFound = false;
