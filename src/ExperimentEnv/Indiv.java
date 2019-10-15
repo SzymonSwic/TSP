@@ -15,13 +15,15 @@ public class Indiv implements Comparable<Indiv> {
     }
 
     private void updateRouteLength() {
-        this.routeLength = 0.0;
+        double tmpCounter = 0.0;
         for (int i = 0; i < route.size() - 1; i++) {
             int cityNr1 = route.get(i);
             int cityNr2 = route.get(i + 1);
-            routeLength += TSPProblem.getNeighborhoodMatrix()[cityNr1][cityNr2];
+            double buffer = TSPProblem.getNeighborhoodMatrix()[cityNr1][cityNr2];
+            tmpCounter += buffer;
         }
-        routeLength += TSPProblem.getNeighborhoodMatrix()[route.get(route.size() - 1)][0];
+        tmpCounter += TSPProblem.getNeighborhoodMatrix()[route.get(route.size() - 1)][route.get(0)];
+        setRouteLength(tmpCounter);
     }
 
     public void mutationPair() {
@@ -70,20 +72,28 @@ public class Indiv implements Comparable<Indiv> {
         return route;
     }
 
+    public void setRouteLength(double routeLength) {
+        this.routeLength = routeLength;
+    }
+
     public double getFitness(){
         return getRouteLength();
     }
 
     private double getRouteLength() {
-        return routeLength;
+        updateRouteLength();
+        return this.routeLength;
     }
 
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        for (int i : route) {
-            builder.append(i).append(" ");
-        }
-        return builder.toString();
+//        StringBuilder builder = new StringBuilder();
+//        for (int i : route) {
+//            builder.append(i).append(" ");
+//        }
+//        String fitnes = String.format("%.2f", this.getFitness());
+//        builder.append("- fitness: ").append(fitnes);
+//        return builder.toString();
+        return "fitness: "+String.format("%.2f", getFitness());
     }
 
     @Override

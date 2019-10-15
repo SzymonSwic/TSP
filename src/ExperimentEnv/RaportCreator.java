@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class RaportCreator {
 
@@ -22,6 +23,10 @@ public class RaportCreator {
     }
 
     private SinglePopulationScore getScores(Population population) {
+//        for (Indiv i : population.getIndivs())
+//            System.out.println(i.toString());
+//        System.out.println("--------------------------------------------");
+
         Indiv best = population.indivs.get(0);
         Indiv worst = best;
 
@@ -55,6 +60,7 @@ public class RaportCreator {
         raportCounter++;
         File file = new File("results/raport" + raportCounter + ".csv");
         try (PrintWriter pw = new PrintWriter(file)) {
+            pw.println("nr, best, avg, worst");
             this.experimentResult
                     .stream()
                     .map(SinglePopulationScore::toString)
@@ -78,9 +84,9 @@ public class RaportCreator {
         public String toString() {
             StringBuilder builder = new StringBuilder();
             builder.append(this.popNumber).append(",");
-            builder.append(this.worstScore).append(",");
-            builder.append(this.bestScore).append(",");
-            builder.append(this.avgScore);
+            builder.append(String.format(Locale.US,"%.2f",this.worstScore)).append(",");
+            builder.append(String.format(Locale.US,"%.2f",this.bestScore)).append(",");
+            builder.append(String.format(Locale.US,"%.2f",this.avgScore));
             return builder.toString();
         }
     }

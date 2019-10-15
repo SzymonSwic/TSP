@@ -53,7 +53,7 @@ public class TSPProblem {
         return neighborhoodMatrix;
     }
 
-    public void displayMatrix() {
+    public static void displayMatrix() {
         for (int row = 0; row < dimensions; row++) {
             for (int col = 0; col < dimensions; col++) {
                 System.out.printf("%8s", Math.floor(neighborhoodMatrix[row][col]) + " ");

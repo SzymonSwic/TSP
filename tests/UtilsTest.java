@@ -35,6 +35,12 @@ public class UtilsTest {
     }
 
     @Test
+    public void fitnessTest(){
+        Indiv ind = new Indiv(new ArrayList<>(Arrays.asList(1,6,2,7,8,9,10,3,5,0,4)));
+        Assert.assertEquals(ind.getFitness(), 4605, 5);
+    }
+
+    @Test
     public void crossoverPMXTest(){
         ArrayList<Indiv> indivs = getSamplePopulation().getIndivs();
         Indiv[] result = indivs.get(0).crossoverPMX(indivs.get(1));

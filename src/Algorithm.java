@@ -22,7 +22,7 @@ public class Algorithm {
     }
 
     public void runEA() {
-        currPopulation = new Population(TSPProblem.getDimensions()); //create first random generation
+        currPopulation = new Population(parameters.populationSize); //create first random generation
         newPopulation = currPopulation.copy(); //buffer for creating new generations
         for (int generationNr = 0; generationNr < parameters.generationsAmount; generationNr++) {
             for (int i = 0; i < parameters.populationSize; i++) {
@@ -36,7 +36,6 @@ public class Algorithm {
             }
             raport.loadPopulationToBuffer(currPopulation);
             currPopulation = newPopulation.copy();
-            newPopulation = currPopulation.copy();
         }
         raport.createResultFile();
     }
