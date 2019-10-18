@@ -1,5 +1,9 @@
 package RunEnv;
 
+import Enums.CrossoverType;
+import Enums.MutationType;
+import Enums.SelectionType;
+
 import java.util.ArrayList;
 
 public class Main {
@@ -9,7 +13,7 @@ public class Main {
         Algorithm EA = new Algorithm();
         for(ExperimentParameters singleExperiment: parametersList){
             EA.setupNewExperiment(singleExperiment);
-            EA.runExperimentInLoop(1);
+            EA.runExperimentInLoop(10);
         }
     }
 
@@ -31,10 +35,10 @@ public class Main {
         int generationsAmount = 1000;
         int tournamentSize = 10;
         double Px = 0.8;
-        double Pm = 0.01;
-        String srcFilePath = "TSP/berlin52.tsp";
+        double Pm = 0.2;
+        String srcFilePath = "TSP/berlin11_modified.tsp";
         SelectionType selectionType = SelectionType.TOURNAMENT;
-        MutationType mutationType = MutationType.INV;
+        MutationType mutationType = MutationType.SWAP;
         CrossoverType crossoverType = CrossoverType.PMX;
         result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType, srcFilePath));
 

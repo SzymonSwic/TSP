@@ -13,7 +13,6 @@ public class RaportCreator {
     private ArrayList<SinglePopulationScore> experimentResults;
     private ExperimentParameters experimentData;
     private int populationCounter;
-    private static int iterationsCounter = 0;
 
     public RaportCreator() {
         this.experimentResults = new ArrayList<>();
@@ -32,14 +31,16 @@ public class RaportCreator {
 
     public void loadPopulationToBuffer(Population population) {
         this.populationCounter++;
-        experimentResults.add(getScores(population));
+        if (this.populationCounter > experimentData.generationsAmount) {
+            this.populationCounter -= experimentData.generationsAmount;
+            experimentResults.set(populationCounter, updateScore(experimentResults.get(populationCounter), getScores(population)));
+        } else {
+            experimentResults.add(getScores(population));
+        }
+
     }
 
     private SinglePopulationScore getScores(Population population) {
-//        for (Indiv i : population.getIndivs())
-//            System.out.println(i.toString());
-//        System.out.println("--------------------------------------------");
-
         Indiv best = population.indivs.get(0);
         Indiv worst = best;
 
@@ -54,6 +55,14 @@ public class RaportCreator {
         return new SinglePopulationScore(this.populationCounter, best.getFitness(), avg, worst.getFitness());
     }
 
+    private SinglePopulationScore updateScore(SinglePopulationScore oldScore, SinglePopulationScore newScore) {
+        oldScore.bestScore = (oldScore.bestScore + newScore.bestScore) / 2;
+        oldScore.worstScore = (oldScore.worstScore + newScore.worstScore) / 2;
+        oldScore.avgScore = (oldScore.avgScore + newScore.avgScore) / 2;
+
+        return oldScore;
+    }
+
     private double countAvg(Population population) {
         double counter = 0;
         for (Indiv i : population.getIndivs()) {
@@ -62,8 +71,8 @@ public class RaportCreator {
         return counter / population.getIndivs().size();
     }
 
-    public void createResultFile(int iterator) {
-        File file = new File("results/" + getRaportName() + " - iteration" + iterator + ".csv");
+    public void createResultFile() {
+        File file = new File("results/" + getRaportName() + ".csv");
         try (PrintWriter pw = new PrintWriter(file)) {
             pw.println("nr, best, avg, worst");
             this.experimentResults

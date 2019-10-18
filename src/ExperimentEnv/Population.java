@@ -1,9 +1,9 @@
 package ExperimentEnv;
 
 import MyUtils.Utils;
-import RunEnv.CrossoverType;
-import RunEnv.MutationType;
-import RunEnv.SelectionType;
+import Enums.CrossoverType;
+import Enums.MutationType;
+import Enums.SelectionType;
 
 import java.util.ArrayList;
 import java.util.Collections;

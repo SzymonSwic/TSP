@@ -1,5 +1,9 @@
 package RunEnv;
 
+import Enums.CrossoverType;
+import Enums.MutationType;
+import Enums.SelectionType;
+
 public class ExperimentParameters {
     public int populationSize, generationsAmount, tournamentSize;
     public double Px, Pm;

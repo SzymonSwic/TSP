@@ -1,7 +1,7 @@
 package ExperimentEnv;
 
-import RunEnv.CrossoverType;
-import RunEnv.MutationType;
+import Enums.CrossoverType;
+import Enums.MutationType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

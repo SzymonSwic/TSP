@@ -1,4 +1,4 @@
-package RunEnv;
+package Enums;
 
 public enum CrossoverType {
     PMX,

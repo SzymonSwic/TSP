@@ -2,12 +2,11 @@ import ExperimentEnv.Indiv;
 import ExperimentEnv.Population;
 import ExperimentEnv.TSPProblem;
 import ExperimentEnv.TSPProblemCreator;
-import RunEnv.CrossoverType;
-import RunEnv.MutationType;
+import Enums.CrossoverType;
+import Enums.MutationType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
 
 
 import java.util.ArrayList;

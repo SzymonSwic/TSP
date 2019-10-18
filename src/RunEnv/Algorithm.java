@@ -25,9 +25,9 @@ class Algorithm {
     public void runExperimentInLoop(int iters){
         for(int i=0; i<iters; i++){
             runEA();
-            raport.createResultFile(i);
             System.out.println("Experiment "+i+" done.");
         }
+        raport.createResultFile();
     }
 
     private void runEA() {
