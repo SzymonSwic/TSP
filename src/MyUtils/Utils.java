@@ -15,6 +15,10 @@ public class Utils {
         return result;
     }
 
+    public static double getRandomDoubleInRange(double start, double stop){
+        return start + (stop - start) * r.nextDouble();
+    }
+
     public static boolean drawDecision(double chance){
         return r.nextDouble() < chance;
     }

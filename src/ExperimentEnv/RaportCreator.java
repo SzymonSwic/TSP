@@ -1,5 +1,7 @@
 package ExperimentEnv;
 
+import RunEnv.ExperimentParameters;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -8,18 +10,29 @@ import java.util.Locale;
 
 public class RaportCreator {
 
-    ArrayList<SinglePopulationScore> experimentResult;
-    int populationCounter;
-    private static int raportCounter = 0;
+    private ArrayList<SinglePopulationScore> experimentResults;
+    private ExperimentParameters experimentData;
+    private int populationCounter;
+    private static int iterationsCounter = 0;
 
     public RaportCreator() {
-        this.experimentResult = new ArrayList<>();
+        this.experimentResults = new ArrayList<>();
+    }
+
+    public RaportCreator(ExperimentParameters params) {
+        this.experimentResults = new ArrayList<>();
+        this.experimentData = params;
+        this.populationCounter = 0;
+    }
+
+    public void updateExperimentInfo(ExperimentParameters params) {
+        this.experimentData = params;
         this.populationCounter = 0;
     }
 
     public void loadPopulationToBuffer(Population population) {
         this.populationCounter++;
-        experimentResult.add(getScores(population));
+        experimentResults.add(getScores(population));
     }
 
     private SinglePopulationScore getScores(Population population) {
@@ -49,32 +62,41 @@ public class RaportCreator {
         return counter / population.getIndivs().size();
     }
 
-    public void showResults() {
-        System.out.println("Nr worst   -  best   -  average");
-        for (SinglePopulationScore score : experimentResult) {
-            System.out.println(score);
-        }
-    }
-
-    public void createResultFile() {
-        raportCounter++;
-        File file = new File("results/raport" + raportCounter + ".csv");
+    public void createResultFile(int iterator) {
+        File file = new File("results/" + getRaportName() + " - iteration" + iterator + ".csv");
         try (PrintWriter pw = new PrintWriter(file)) {
             pw.println("nr, best, avg, worst");
-            this.experimentResult
+            this.experimentResults
                     .stream()
                     .map(SinglePopulationScore::toString)
                     .forEach(pw::println);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        clearBuffer();
     }
+
+    private void clearBuffer() {
+        this.experimentResults.clear();
+        this.populationCounter = 0;
+    }
+
+    private String getRaportName() {
+        return experimentData.srcFilePath.substring(4, experimentData.srcFilePath.indexOf(".")) +
+                " pop-" + experimentData.populationSize +
+                " gen-" + experimentData.generationsAmount +
+                " px-" + (Double.toString(experimentData.Px).replace(".", ",")) +
+                " pm-" + (Double.toString(experimentData.Pm).replace(".", ",")) +
+                " tour-" + experimentData.tournamentSize +
+                " " + experimentData.selectionType + " " + experimentData.crossoverType + " " + experimentData.mutationType;
+    }
+
 
     private class SinglePopulationScore {
         int popNumber;
         double worstScore, bestScore, avgScore;
 
-        public SinglePopulationScore(int popNumber, double worstScore, double bestScore, double avgScore) {
+        SinglePopulationScore(int popNumber, double worstScore, double bestScore, double avgScore) {
             this.popNumber = popNumber;
             this.worstScore = worstScore;
             this.bestScore = bestScore;
@@ -82,12 +104,10 @@ public class RaportCreator {
         }
 
         public String toString() {
-            StringBuilder builder = new StringBuilder();
-            builder.append(this.popNumber).append(",");
-            builder.append(String.format(Locale.US,"%.2f",this.worstScore)).append(",");
-            builder.append(String.format(Locale.US,"%.2f",this.bestScore)).append(",");
-            builder.append(String.format(Locale.US,"%.2f",this.avgScore));
-            return builder.toString();
+            return this.popNumber + "," +
+                    String.format(Locale.US, "%.2f", this.worstScore) + "," +
+                    String.format(Locale.US, "%.2f", this.bestScore) + "," +
+                    String.format(Locale.US, "%.2f", this.avgScore);
         }
     }
 }

@@ -2,6 +2,8 @@ import ExperimentEnv.Indiv;
 import ExperimentEnv.Population;
 import ExperimentEnv.TSPProblem;
 import ExperimentEnv.TSPProblemCreator;
+import RunEnv.CrossoverType;
+import RunEnv.MutationType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,11 +51,25 @@ public class UtilsTest {
     }
 
     private Population getSamplePopulation() {
-        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(5,7,1,3,6,4,2));
-        ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(4,6,2,7,3,1,5));
+        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(3,4,8,2,7,1,6,5));
+        ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(4,2,5,1,6,8,3,7));
         ArrayList<Indiv> popInsert = new ArrayList<>();
         popInsert.add(new Indiv(list));
         popInsert.add(new Indiv(list2));
         return new Population(popInsert);
+    }
+
+    @Test
+    public void inversionTest(){
+        Population sample = getSamplePopulation();
+        System.out.println(sample.getIndivs().get(0).toString());
+        sample.tryMutation(0, 1.0, MutationType.INV);
+        System.out.println(sample.getIndivs().get(0).toString());
+    }
+
+    @Test
+    public void orderCrossTest(){
+        Population sample = getSamplePopulation();
+        sample.tryCrossover(sample, 0, 1, 1.0, CrossoverType.ORDER);
     }
 }
