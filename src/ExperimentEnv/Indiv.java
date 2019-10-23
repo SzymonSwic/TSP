@@ -12,14 +12,6 @@ public class Indiv implements Comparable<Indiv> {
     private ArrayList<Integer> route;
     private double routeLength;
 
-    public Indiv(double fitness) {
-        this.routeLength = fitness;
-    }
-
-    public double getDummyFitness() {
-        return this.routeLength;
-    }
-
     public Indiv(ArrayList<Integer> route) {
         this.route = route;
         updateRouteLength();
@@ -37,7 +29,7 @@ public class Indiv implements Comparable<Indiv> {
         setRouteLength(tmpCounter);
     }
 
-    public void mutation(MutationType type) {
+    void mutation(MutationType type) {
         switch (type) {
             case SWAP:
                 mutationSwap();
@@ -48,7 +40,7 @@ public class Indiv implements Comparable<Indiv> {
         }
     }
 
-    public Indiv[] crossover(Indiv par2, CrossoverType type) {
+    Indiv[] crossover(Indiv par2, CrossoverType type) {
         Indiv[] result = new Indiv[0];
         switch (type) {
             case PMX:
@@ -73,7 +65,7 @@ public class Indiv implements Comparable<Indiv> {
         updateRouteLength();
     }
 
-    public void mutationInversion() {
+    private void mutationInversion() {
         Random r = new Random();
         int begin = r.nextInt(route.size());
         int end = r.nextInt(route.size());
@@ -93,7 +85,7 @@ public class Indiv implements Comparable<Indiv> {
         }
     }
 
-    public Indiv[] crossoverOrder(Indiv par2) {
+    private Indiv[] crossoverOrder(Indiv par2) {
         Random r = new Random();
         int sep1 = r.nextInt(route.size() - 1);
         int sep2 = r.nextInt(route.size() - 1);
@@ -114,9 +106,7 @@ public class Indiv implements Comparable<Indiv> {
     private Integer[] getOrderChild(Integer[] parent1, Integer[] parent2, int sep1, int sep2) {
         Integer[] child = new Integer[parent1.length];
         Arrays.fill(child, -1);
-        for (int i = sep1; i < sep2; i++) {
-            child[i] = parent1[i];
-        }
+        if (sep2 - sep1 >= 0) System.arraycopy(parent1, sep1, child, sep1, sep2 - sep1);
 
         int childIndex = sep2;
         int par2Index = sep2;
@@ -138,8 +128,8 @@ public class Indiv implements Comparable<Indiv> {
     }
 
     private boolean contains(Integer[] arr, int val) {
-        for (int i = 0; i < arr.length; i++) {
-            if (arr[i] == val)
+        for (Integer integer : arr) {
+            if (integer == val)
                 return true;
         }
         return false;
@@ -179,7 +169,7 @@ public class Indiv implements Comparable<Indiv> {
         return route;
     }
 
-    public void setRouteLength(double routeLength) {
+    private void setRouteLength(double routeLength) {
         this.routeLength = routeLength;
     }
 

@@ -14,13 +14,15 @@ public class ExperimentParameters {
 
     public int neighborsAmount, tabuListSize, searchIterations;
 
-    public ExperimentParameters(int neighborsAmount, int tabuListSize, int searchIterations) {
+    ExperimentParameters(String src, int neighborsAmount, int tabuListSize, int searchIterations) {
+        this.srcFilePath = src;
         this.neighborsAmount = neighborsAmount;
         this.tabuListSize = tabuListSize;
         this.searchIterations = searchIterations;
+        this.generationsAmount = searchIterations;
     }
 
-    public ExperimentParameters(int populationSize, int generationsAmount, int tournamentSize, SelectionType selectionType, double px, CrossoverType crossoverType, double pm, MutationType mutationType, String src) {
+    public ExperimentParameters(String src, int populationSize, int generationsAmount, int tournamentSize, SelectionType selectionType, double px, CrossoverType crossoverType, double pm, MutationType mutationType) {
         this.populationSize = populationSize;
         this.generationsAmount = generationsAmount;
         this.tournamentSize = tournamentSize;

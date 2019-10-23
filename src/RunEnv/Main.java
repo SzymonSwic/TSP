@@ -1,27 +1,20 @@
 package RunEnv;
 
-import Enums.CrossoverType;
-import Enums.MutationType;
-import Enums.SelectionType;
-import ExperimentEnv.Indiv;
-import ExperimentEnv.TSPProblem;
-import ExperimentEnv.TSPProblemCreator;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Main {
 
     public static void main(String[] args) {
         ArrayList<ExperimentParameters> parametersList = getExperimentsConfig();
-        Algorithm EA = new Evolutionary();
+//        Algorithm algorithm = new Evolutionary();
+        Algorithm algorithm = new TabuSearch();
         for(ExperimentParameters singleExperiment: parametersList){
-            EA.setupNewExperiment(singleExperiment);
-            EA.runExperimentInLoop(10);
+            algorithm.setupNewExperiment(singleExperiment);
+            algorithm.runExperimentInLoop(1);
         }
     }
 
-    public static ArrayList<ExperimentParameters> getExperimentsConfig(){
+    private static ArrayList<ExperimentParameters> getExperimentsConfig(){
         ArrayList<ExperimentParameters> result = new ArrayList<>();
 
 //        //test
@@ -33,18 +26,23 @@ public class Main {
 //        String srcFilePath = "TSP/berlin11_modified.tsp";
 //        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
 
+        String srcFilePath = "TSP/test.tsp";
+        int neighborsAmount = 7;
+        int tabuListSize = 5;
+        int searchIterations = 5;
+        result.add(new ExperimentParameters(srcFilePath, neighborsAmount, tabuListSize, searchIterations));
 
         //baza
-        int populationSize = 100;
-        int generationsAmount = 1000;
-        int tournamentSize = 10;
-        double Px = 0.8;
-        double Pm = 0.2;
-        String srcFilePath = "TSP/berlin11_modified.tsp";
-        SelectionType selectionType = SelectionType.TOURNAMENT;
-        MutationType mutationType = MutationType.SWAP;
-        CrossoverType crossoverType = CrossoverType.PMX;
-        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType, srcFilePath));
+//        int populationSize = 100;
+//        int generationsAmount = 1000;
+//        int tournamentSize = 10;
+//        double Px = 0.8;
+//        double Pm = 0.2;
+//        String srcFilePath = "TSP/berlin11_modified.tsp";
+//        SelectionType selectionType = SelectionType.TOURNAMENT;
+//        MutationType mutationType = MutationType.SWAP;
+//        CrossoverType crossoverType = CrossoverType.PMX;
+//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType, srcFilePath));
 
 //        //wieksze populacje
 //        populationSize = 500;

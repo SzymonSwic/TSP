@@ -74,7 +74,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void tabuNeighborTest(){
+    public void tabuListInsertTest(){
         TabuList hood = new TabuList(3);
         ArrayList<Integer> list = new ArrayList<>(Arrays.asList(1,2,3,4,5));
         ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(2,3,4,5,1));

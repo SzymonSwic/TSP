@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class RaportCreator {
+    //raport is universal for all experiments - in tabu search population score has only number and best parameter (avg and worst equal 0)
 
     private ArrayList<SinglePopulationScore> experimentResults;
     private ExperimentParameters experimentData;
@@ -43,23 +44,30 @@ public class RaportCreator {
 
     private SinglePopulationScore getScores(Population population) {
         Indiv best = population.indivs.get(0);
-        Indiv worst = best;
+        if (population.indivs.size() > 1) {
+            Indiv worst = best;
 
-        for (Indiv indiv : population.indivs) {
-            if (indiv.compareTo(best) > 0)
-                best = indiv;
-            else if (indiv.compareTo(worst) < 0)
-                worst = indiv;
+            for (Indiv indiv : population.indivs) {
+                if (indiv.compareTo(best) > 0)
+                    best = indiv;
+                else if (indiv.compareTo(worst) < 0)
+                    worst = indiv;
+            }
+            double avg = countAvg(population);
+
+            return new SinglePopulationScore(this.populationCounter, best.getFitness(), avg, worst.getFitness());
         }
-        double avg = countAvg(population);
+        return new SinglePopulationScore(this.populationCounter, best.getFitness(), 0, 0);
 
-        return new SinglePopulationScore(this.populationCounter, best.getFitness(), avg, worst.getFitness());
     }
 
     private SinglePopulationScore updateScore(SinglePopulationScore oldScore, SinglePopulationScore newScore) {
         oldScore.bestScore = (oldScore.bestScore + newScore.bestScore) / 2;
-        oldScore.worstScore = (oldScore.worstScore + newScore.worstScore) / 2;
-        oldScore.avgScore = (oldScore.avgScore + newScore.avgScore) / 2;
+        if (oldScore.avgScore != 0) {
+            oldScore.worstScore = (oldScore.worstScore + newScore.worstScore) / 2;
+            oldScore.avgScore = (oldScore.avgScore + newScore.avgScore) / 2;
+        }
+
 
         return oldScore;
     }
@@ -75,7 +83,9 @@ public class RaportCreator {
     public void createResultFile(AlgorithmType type) {
         File file = new File("results/" + getRaportName(type) + ".csv");
         try (PrintWriter pw = new PrintWriter(file)) {
-            pw.println("nr, best, avg, worst");
+            if(type.equals(AlgorithmType.EVOLUTION))
+                pw.println("nr, best, avg, worst");
+            else pw.println("nr, fitness");
             this.experimentResults
                     .stream()
                     .map(SinglePopulationScore::toString)
@@ -92,7 +102,7 @@ public class RaportCreator {
     }
 
     private String getRaportName(AlgorithmType type) {
-        switch(type){
+        switch (type) {
             case EVOLUTION:
                 return experimentData.srcFilePath.substring(4, experimentData.srcFilePath.indexOf(".")) +
                         " pop-" + experimentData.populationSize +
@@ -103,8 +113,8 @@ public class RaportCreator {
                         " " + experimentData.selectionType + " " + experimentData.crossoverType + " " + experimentData.mutationType;
             case TABU:
                 return experimentData.srcFilePath.substring(4, experimentData.srcFilePath.indexOf(".")) +
-                        " neighbors- "+ experimentData.neighborsAmount +
-                        " tabuSize- "+experimentData.tabuListSize;
+                        " neighbors- " + experimentData.neighborsAmount +
+                        " tabuSize- " + experimentData.tabuListSize;
         }
         return "";
     }
@@ -114,7 +124,7 @@ public class RaportCreator {
         int popNumber;
         double worstScore, bestScore, avgScore;
 
-        SinglePopulationScore(int popNumber, double worstScore, double bestScore, double avgScore) {
+        SinglePopulationScore(int popNumber, double bestScore, double avgScore, double worstScore) {
             this.popNumber = popNumber;
             this.worstScore = worstScore;
             this.bestScore = bestScore;
@@ -122,10 +132,13 @@ public class RaportCreator {
         }
 
         public String toString() {
-            return this.popNumber + "," +
-                    String.format(Locale.US, "%.2f", this.worstScore) + "," +
-                    String.format(Locale.US, "%.2f", this.bestScore) + "," +
-                    String.format(Locale.US, "%.2f", this.avgScore);
+            String bestScore = String.format(Locale.US, "%.2f", this.bestScore);
+            String worstScore = String.format(Locale.US, "%.2f", this.worstScore);
+            String avgScore = String.format(Locale.US, "%.2f", this.avgScore);
+
+            if (this.worstScore > 0)
+                return this.popNumber + "," + bestScore + "," + avgScore + "," + worstScore;
+            return this.popNumber + "," + bestScore;
         }
     }
 }

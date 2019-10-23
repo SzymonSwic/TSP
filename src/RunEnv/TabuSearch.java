@@ -5,17 +5,11 @@ import ExperimentEnv.Indiv;
 import ExperimentEnv.Population;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
-public class TabuSearch extends Algorithm {
-    //TODO tabu parematers: neighbors size, tabu list size,
+class TabuSearch extends Algorithm {
+    //tabu parematers: neighbors size, tabu list size,
 
-    TabuList tabuList;
-
-    public TabuSearch() {
-        this.currPopulation = new Population(1);
-        tabuList = new TabuList(parameters.tabuListSize);
-    }
+    private TabuList tabuList;
 
     @Override
     void runExperimentInLoop(int iters) {
@@ -28,13 +22,19 @@ public class TabuSearch extends Algorithm {
 
     @Override
     void run() {
-        for(int i = 0; i<parameters.searchIterations; i++){
+        this.currPopulation = new Population(1);
+        tabuList = new TabuList(parameters.tabuListSize);
+        boolean bestLocalFound = false;
+        int iterationsCounter = 0;
+        while (iterationsCounter < parameters.searchIterations && !bestLocalFound) {
             raport.loadPopulationToBuffer(this.currPopulation);
             Indiv nextSearcher = getBestNeighbor();
-            this.tabuList.add(nextSearcher);
-            this.currPopulation.getIndivs().set(0, nextSearcher);
+            if (nextSearcher != null) {
+                this.currPopulation.getIndivs().set(0, nextSearcher);
+                this.tabuList.add(nextSearcher);
+            } else bestLocalFound = true;
+            iterationsCounter++;
         }
-
     }
 
     private Indiv getBestNeighbor() {
@@ -49,8 +49,12 @@ public class TabuSearch extends Algorithm {
 
     private ArrayList<Indiv> getNeighbors() {
         ArrayList<Indiv> result = new ArrayList<>();
-        for (int i = 0; i < parameters.neighborsAmount; i++) {
-            result.add(getNeighbor(getSercher()));
+        int emergencyCounter = 0;
+        while (result.size() < parameters.neighborsAmount && emergencyCounter < parameters.neighborsAmount * 3) {
+            Indiv newNeighbor = getNeighbor(getSercher());
+            if (!isTabu(newNeighbor))
+                result.add(getNeighbor(getSercher()));
+            emergencyCounter++;
         }
         return result;
     }
@@ -61,11 +65,15 @@ public class TabuSearch extends Algorithm {
         return neighbor;
     }
 
-    private boolean isTabu(){
-
+    private boolean isTabu(Indiv ind) {
+        for (Indiv taboo : this.tabuList.getTabu()) {
+            if (ind.isSame(taboo))
+                return true;
+        }
+        return false;
     }
 
-    private Indiv getSercher(){
+    private Indiv getSercher() {
         return this.currPopulation.getIndivs().get(0);
     }
 }
