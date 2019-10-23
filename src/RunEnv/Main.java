@@ -3,14 +3,18 @@ package RunEnv;
 import Enums.CrossoverType;
 import Enums.MutationType;
 import Enums.SelectionType;
+import ExperimentEnv.Indiv;
+import ExperimentEnv.TSPProblem;
+import ExperimentEnv.TSPProblemCreator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main {
 
     public static void main(String[] args) {
         ArrayList<ExperimentParameters> parametersList = getExperimentsConfig();
-        Algorithm EA = new Algorithm();
+        Algorithm EA = new Evolutionary();
         for(ExperimentParameters singleExperiment: parametersList){
             EA.setupNewExperiment(singleExperiment);
             EA.runExperimentInLoop(10);

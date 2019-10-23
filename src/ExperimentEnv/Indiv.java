@@ -40,9 +40,11 @@ public class Indiv implements Comparable<Indiv> {
     public void mutation(MutationType type) {
         switch (type) {
             case SWAP:
-                mutationSwap(); break;
+                mutationSwap();
+                break;
             case INV:
-                mutationInversion(); break;
+                mutationInversion();
+                break;
         }
     }
 
@@ -118,26 +120,26 @@ public class Indiv implements Comparable<Indiv> {
 
         int childIndex = sep2;
         int par2Index = sep2;
-        while(contains(child, -1)) {
-            if(!contains(child, parent2[par2Index])){
+        while (contains(child, -1)) {
+            if (!contains(child, parent2[par2Index])) {
                 child[childIndex] = parent2[par2Index];
                 childIndex = getNextCrossIndex(childIndex, child.length);
                 par2Index = getNextCrossIndex(par2Index, parent2.length);
-            }
-            else
+            } else
                 par2Index = getNextCrossIndex(par2Index, parent2.length);
         }
         return child;
     }
-    private int getNextCrossIndex(int val, int size){
-        if(val+1 == size)
+
+    private int getNextCrossIndex(int val, int size) {
+        if (val + 1 == size)
             return 0;
         return ++val;
     }
 
-    private boolean contains(Integer[] arr, int val){
-        for(int i=0; i< arr.length; i++){
-            if(arr[i] == val)
+    private boolean contains(Integer[] arr, int val) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] == val)
                 return true;
         }
         return false;
@@ -206,15 +208,23 @@ public class Indiv implements Comparable<Indiv> {
         return (int) (o.routeLength - this.routeLength);
     }
 
+    public boolean isSame(Indiv ind) {
+        for (int i = 0; i < ind.route.size(); i++) {
+            if (!ind.route.get(i).equals(this.route.get(i)))
+                return false;
+        }
+        return true;
+    }
+
     private void swap(Integer[] array, int ind1, int ind2) {
         int buff = array[ind1];
         array[ind1] = array[ind2];
         array[ind2] = buff;
     }
 
-    public ArrayList<Integer> copyRoute() {
+    public Indiv getCopy() {
         ArrayList<Integer> copy = new ArrayList<>(0);
         copy.addAll(this.route);
-        return copy;
+        return new Indiv(copy);
     }
 }

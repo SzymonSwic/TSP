@@ -1,5 +1,6 @@
 package ExperimentEnv;
 
+import Enums.AlgorithmType;
 import RunEnv.ExperimentParameters;
 
 import java.io.File;
@@ -71,8 +72,8 @@ public class RaportCreator {
         return counter / population.getIndivs().size();
     }
 
-    public void createResultFile() {
-        File file = new File("results/" + getRaportName() + ".csv");
+    public void createResultFile(AlgorithmType type) {
+        File file = new File("results/" + getRaportName(type) + ".csv");
         try (PrintWriter pw = new PrintWriter(file)) {
             pw.println("nr, best, avg, worst");
             this.experimentResults
@@ -90,14 +91,22 @@ public class RaportCreator {
         this.populationCounter = 0;
     }
 
-    private String getRaportName() {
-        return experimentData.srcFilePath.substring(4, experimentData.srcFilePath.indexOf(".")) +
-                " pop-" + experimentData.populationSize +
-                " gen-" + experimentData.generationsAmount +
-                " px-" + (Double.toString(experimentData.Px).replace(".", ",")) +
-                " pm-" + (Double.toString(experimentData.Pm).replace(".", ",")) +
-                " tour-" + experimentData.tournamentSize +
-                " " + experimentData.selectionType + " " + experimentData.crossoverType + " " + experimentData.mutationType;
+    private String getRaportName(AlgorithmType type) {
+        switch(type){
+            case EVOLUTION:
+                return experimentData.srcFilePath.substring(4, experimentData.srcFilePath.indexOf(".")) +
+                        " pop-" + experimentData.populationSize +
+                        " gen-" + experimentData.generationsAmount +
+                        " px-" + (Double.toString(experimentData.Px).replace(".", ",")) +
+                        " pm-" + (Double.toString(experimentData.Pm).replace(".", ",")) +
+                        " tour-" + experimentData.tournamentSize +
+                        " " + experimentData.selectionType + " " + experimentData.crossoverType + " " + experimentData.mutationType;
+            case TABU:
+                return experimentData.srcFilePath.substring(4, experimentData.srcFilePath.indexOf(".")) +
+                        " neighbors- "+ experimentData.neighborsAmount +
+                        " tabuSize- "+experimentData.tabuListSize;
+        }
+        return "";
     }
 
 

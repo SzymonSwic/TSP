@@ -4,6 +4,7 @@ import ExperimentEnv.TSPProblem;
 import ExperimentEnv.TSPProblemCreator;
 import Enums.CrossoverType;
 import Enums.MutationType;
+import RunEnv.TabuList;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,5 +71,25 @@ public class UtilsTest {
     public void orderCrossTest(){
         Population sample = getSamplePopulation();
         sample.tryCrossover(sample, 0, 1, 1.0, CrossoverType.ORDER);
+    }
+
+    @Test
+    public void tabuNeighborTest(){
+        TabuList hood = new TabuList(3);
+        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(1,2,3,4,5));
+        ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(2,3,4,5,1));
+        ArrayList<Integer> list3 = new ArrayList<>(Arrays.asList(3,4,5,1,2));
+        ArrayList<Integer> list4 = new ArrayList<>(Arrays.asList(4,5,1,2,3));
+        ArrayList<Integer> list5 = new ArrayList<>(Arrays.asList(5,1,2,3,4));
+        hood.add(new Indiv(list));
+        System.out.println(hood.toString());
+        hood.add(new Indiv(list2));
+        System.out.println(hood.toString());
+        hood.add(new Indiv(list3));
+        System.out.println(hood.toString());
+        hood.add(new Indiv(list4));
+        System.out.println(hood.toString());
+        hood.add(new Indiv(list5));
+        System.out.println(hood.toString());
     }
 }

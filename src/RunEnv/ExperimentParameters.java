@@ -12,7 +12,12 @@ public class ExperimentParameters {
     public CrossoverType crossoverType;
     public SelectionType selectionType;
 
-    public ExperimentParameters() {
+    public int neighborsAmount, tabuListSize, searchIterations;
+
+    public ExperimentParameters(int neighborsAmount, int tabuListSize, int searchIterations) {
+        this.neighborsAmount = neighborsAmount;
+        this.tabuListSize = tabuListSize;
+        this.searchIterations = searchIterations;
     }
 
     public ExperimentParameters(int populationSize, int generationsAmount, int tournamentSize, SelectionType selectionType, double px, CrossoverType crossoverType, double pm, MutationType mutationType, String src) {
