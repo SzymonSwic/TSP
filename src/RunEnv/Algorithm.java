@@ -1,5 +1,6 @@
 package RunEnv;
 
+import Enums.AlgorithmType;
 import ExperimentEnv.Population;
 import ExperimentEnv.RaportCreator;
 import ExperimentEnv.TSPProblem;
@@ -12,8 +13,8 @@ abstract class Algorithm {
 
     protected RaportCreator raport;
 
-    public Algorithm() {
-        this.raport = new RaportCreator();
+    public Algorithm(AlgorithmType type) {
+        this.raport = new RaportCreator(type);
     }
 
     public void setupNewExperiment(ExperimentParameters parameters){

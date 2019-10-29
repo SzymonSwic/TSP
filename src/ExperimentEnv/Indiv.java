@@ -2,6 +2,7 @@ package ExperimentEnv;
 
 import Enums.CrossoverType;
 import Enums.MutationType;
+import MyUtils.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,13 +30,17 @@ public class Indiv implements Comparable<Indiv> {
         setRouteLength(tmpCounter);
     }
 
-    void mutation(MutationType type) {
+    void mutation(MutationType type, double chance) {
         switch (type) {
             case SWAP:
-                mutationSwap();
+                for(int i=0; i<this.route.size(); i++){
+                    if(Utils.drawDecision(chance))
+                        mutationSwap(i);
+                }
                 break;
             case INV:
-                mutationInversion();
+                if(Utils.drawDecision(chance))
+                    mutationInversion();
                 break;
         }
     }
@@ -53,15 +58,14 @@ public class Indiv implements Comparable<Indiv> {
         return result;
     }
 
-    public void mutationSwap() {
+    public void mutationSwap(int gene) {
         Random r = new Random();
-        int first = r.nextInt(route.size());
         int second = r.nextInt(route.size());
 
-        while (first == second) {
+        while (gene == second) {
             second = r.nextInt(route.size());
         }
-        Collections.swap(route, first, second);
+        Collections.swap(route, gene, second);
         updateRouteLength();
     }
 
@@ -70,9 +74,15 @@ public class Indiv implements Comparable<Indiv> {
         int begin = r.nextInt(route.size());
         int end = r.nextInt(route.size());
 
-        while (begin >= end) {
+        while (begin == end) {
             begin = r.nextInt(route.size());
             end = r.nextInt(route.size());
+        }
+
+        if(begin > end){
+            int buffer = begin;
+            begin = end;
+            end = buffer;
         }
         invert(route, begin, end);
     }
@@ -89,14 +99,23 @@ public class Indiv implements Comparable<Indiv> {
         Random r = new Random();
         int sep1 = r.nextInt(route.size() - 1);
         int sep2 = r.nextInt(route.size() - 1);
-        while (sep1 >= sep2)
+
+        while (sep1 == sep2){
+            sep1 = r.nextInt(route.size() - 1);
             sep2 = r.nextInt(route.size() - 1);
+        }
+
+        if(sep1 > sep2){
+            int buffer = sep1;
+            sep1 = sep2;
+            sep2 = buffer;
+        }
 
         Integer[] parent1 = route.toArray(new Integer[0]);
         Integer[] parent2 = par2.route.toArray(new Integer[0]);
 
-        Integer[] child1 = getOrderChild(parent1, parent2, 3, 6);
-        Integer[] child2 = getOrderChild(parent2, parent1, 3, 6);
+        Integer[] child1 = getOrderChild(parent1, parent2, sep1, sep2);
+        Integer[] child2 = getOrderChild(parent2, parent1, sep1, sep2);
 
 
         return new Indiv[]{new Indiv(new ArrayList<>(Arrays.asList(child1))),

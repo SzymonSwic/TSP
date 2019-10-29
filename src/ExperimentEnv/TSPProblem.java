@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class TSPProblem {
 
-    private String name, comment;
+    private static String name, comment;
     private static int dimensions;
     private ArrayList<City> cities;
     private static double[][] neighborhoodMatrix;
@@ -33,7 +33,7 @@ public class TSPProblem {
 
 //    getters and setters
 
-    public String getName() {
+    public static String getName() {
         return name;
     }
 

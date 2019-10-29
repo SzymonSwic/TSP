@@ -25,87 +25,91 @@ public class Main {
 //        double Pm = 0.02;
 //        String srcFilePath = "TSP/berlin11_modified.tsp";
 //        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
-
-        String srcFilePath = "TSP/test.tsp";
-        int neighborsAmount = 7;
-        int tabuListSize = 5;
-        int searchIterations = 5;
-        result.add(new ExperimentParameters(srcFilePath, neighborsAmount, tabuListSize, searchIterations));
+//
+        String srcFilePath = "TSP/kroA100.tsp";
+        int neighborsAmount = 3000;
+        int tabuListSize = 50;
+        int stopCounter = 1000;
+        result.add(new ExperimentParameters(srcFilePath, neighborsAmount, tabuListSize, stopCounter));
 
         //baza
 //        int populationSize = 100;
-//        int generationsAmount = 1000;
+//        int generationsAmount = 100;
 //        int tournamentSize = 10;
 //        double Px = 0.8;
-//        double Pm = 0.2;
-//        String srcFilePath = "TSP/berlin11_modified.tsp";
+//        double Pm = 0.03;
+//        String srcFilePath = "TSP/nrw1379.tsp";
 //        SelectionType selectionType = SelectionType.TOURNAMENT;
-//        MutationType mutationType = MutationType.SWAP;
+//        MutationType mutationType = MutationType.INV;
 //        CrossoverType crossoverType = CrossoverType.PMX;
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType, srcFilePath));
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
+//
+//        //roulette test
+//        selectionType = SelectionType.ROULETTE;
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
+//
+//        //OX test
+//        selectionType = SelectionType.TOURNAMENT;
+//        crossoverType = CrossoverType.ORDER;
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
+//
+//        //inversion test
+//        crossoverType = CrossoverType.PMX;
+//        mutationType = MutationType.INV;
+//        Pm = 0.007;
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 
 //        //wieksze populacje
-//        populationSize = 500;
-//        srcFilePath = "TSP/kroA150.tsp";
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
+//        populationSize = 800;
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 //
 //        //wiecej pokolen
-//        populationSize = 200;
+//        populationSize = 300;
 //        generationsAmount = 5000;
-//        srcFilePath = "TSP/kroA150.tsp";
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 //
 //        //wiekszy turniej
-//        populationSize = 200;
 //        generationsAmount = 2000;
-//        tournamentSize = 30;
-//        srcFilePath = "TSP/kroA150.tsp";
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
+//        tournamentSize = 50;
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 //
 //
 //        //mniejsze krzyzowanie
-//        populationSize = 200;
 //        generationsAmount = 2000;
 //        tournamentSize = 10;
 //        Px = 0.4;
-//        srcFilePath = "TSP/kroA150.tsp";
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 //
 //        //wieksza mutacja
-//        populationSize = 200;
-//        generationsAmount = 2000;
-//        tournamentSize = 10;
 //        Px = 0.8;
 //        Pm = 0.1;
-//        srcFilePath = "TSP/kroA150.tsp";
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 //
 //
 //        populationSize = 500;
 //        generationsAmount = 5000;
 //        tournamentSize = 10;
 //        Px = 0.8;
-//        Pm = 0.03;
+//        Pm = 0.007;
 //        srcFilePath = "TSP/kroA200.tsp";
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 //
 //        populationSize = 500;
 //        generationsAmount = 5000;
 //        tournamentSize = 10;
 //        Px = 0.8;
-//        Pm = 0.03;
+//        Pm = 0.007;
 //        srcFilePath = "TSP/fl417.tsp";
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 //
 //        populationSize = 500;
 //        generationsAmount = 5000;
 //        tournamentSize = 10;
 //        Px = 0.8;
-//        Pm = 0.03;
+//        Pm = 0.007;
 //        srcFilePath = "TSP/ali535.tsp";
-//        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
+//        result.add(new ExperimentParameters( srcFilePath, populationSize, generationsAmount, tournamentSize, selectionType, Px, crossoverType, Pm,mutationType));
 //
-
 
 
 

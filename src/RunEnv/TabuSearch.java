@@ -3,6 +3,7 @@ package RunEnv;
 import Enums.AlgorithmType;
 import ExperimentEnv.Indiv;
 import ExperimentEnv.Population;
+import MyUtils.Utils;
 
 import java.util.ArrayList;
 
@@ -11,37 +12,51 @@ class TabuSearch extends Algorithm {
 
     private TabuList tabuList;
 
+    public TabuSearch(){
+        super(AlgorithmType.TABU);
+    }
+
     @Override
     void runExperimentInLoop(int iters) {
         for (int i = 0; i < iters; i++) {
             run();
             System.out.println("Experiment " + i + " done.");
         }
-        raport.createResultFile(AlgorithmType.TABU);
+        raport.createTSResultFile();
     }
 
     @Override
     void run() {
-        this.currPopulation = new Population(1);
         tabuList = new TabuList(parameters.tabuListSize);
-        boolean bestLocalFound = false;
-        int iterationsCounter = 0;
-        while (iterationsCounter < parameters.searchIterations && !bestLocalFound) {
-            raport.loadPopulationToBuffer(this.currPopulation);
-            Indiv nextSearcher = getBestNeighbor();
-            if (nextSearcher != null) {
+        int badNeighborsCounter = 0;
+
+        this.currPopulation = new Population(1);
+        ArrayList<Indiv> neighbors = getNeighbors();
+        raport.loadTSPopulationToBuffer(getSercher(), neighbors); //init random first searcher
+
+        while (badNeighborsCounter < parameters.stopCondition) {
+            neighbors = getNeighbors();
+            Indiv nextSearcher = getBestNeighbor(neighbors);
+
+            if(nextSearcher.compareTo(getSercher()) > 0){
                 this.currPopulation.getIndivs().set(0, nextSearcher);
                 this.tabuList.add(nextSearcher);
-            } else bestLocalFound = true;
-            iterationsCounter++;
+                raport.loadTSPopulationToBuffer(getSercher(), neighbors);
+
+                badNeighborsCounter = 0;
+            }
+            if (nextSearcher.compareTo(getSercher()) < 0)
+                badNeighborsCounter++;
+
+            if(badNeighborsCounter == parameters.stopCondition/2)
+                System.out.println("No progress 50%");
         }
     }
 
-    private Indiv getBestNeighbor() {
-        ArrayList<Indiv> candidates = getNeighbors();
+    private Indiv getBestNeighbor(ArrayList<Indiv> candidates) {
         Indiv best = candidates.get(0);
         for (int i = 1; i < candidates.size(); i++) {
-            if (candidates.get(i).getFitness() < best.getFitness())
+            if (candidates.get(i).compareTo(best) > 0)
                 best = candidates.get(i);
         }
         return best;
@@ -61,7 +76,7 @@ class TabuSearch extends Algorithm {
 
     private Indiv getNeighbor(Indiv ind) {
         Indiv neighbor = ind.getCopy();
-        neighbor.mutationSwap();
+        neighbor.mutationSwap(Utils.getRandomInt(0, neighbor.getRoute().size()));
         return neighbor;
     }
 

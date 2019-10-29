@@ -10,14 +10,17 @@ import org.junit.Before;
 import org.junit.Test;
 
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class UtilsTest {
 
     @Before
-    public void init(){
-        TSPProblemCreator creator = new TSPProblemCreator("TSP/berlin11_modified.tsp");
+    public void init() {
+        TSPProblemCreator creator = new TSPProblemCreator("TSP/nrw1379.tsp");
         TSPProblem tspProblem = creator.create();
     }
 
@@ -37,13 +40,13 @@ public class UtilsTest {
     }
 
     @Test
-    public void fitnessTest(){
-        Indiv ind = new Indiv(new ArrayList<>(Arrays.asList(1,6,2,7,8,9,10,3,5,0,4)));
+    public void fitnessTest() {
+        Indiv ind = new Indiv(new ArrayList<>(Arrays.asList(1, 6, 2, 7, 8, 9, 10, 3, 5, 0, 4)));
         Assert.assertEquals(ind.getFitness(), 4605, 5);
     }
 
     @Test
-    public void crossoverPMXTest(){
+    public void crossoverPMXTest() {
         ArrayList<Indiv> indivs = getSamplePopulation().getIndivs();
         Indiv[] result = indivs.get(0).crossoverPMX(indivs.get(1));
         System.out.println(result[0]);
@@ -51,8 +54,8 @@ public class UtilsTest {
     }
 
     private Population getSamplePopulation() {
-        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(3,4,8,2,7,1,6,5));
-        ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(4,2,5,1,6,8,3,7));
+        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(3, 4, 8, 2, 7, 1, 6, 5));
+        ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(4, 2, 5, 1, 6, 8, 3, 7));
         ArrayList<Indiv> popInsert = new ArrayList<>();
         popInsert.add(new Indiv(list));
         popInsert.add(new Indiv(list2));
@@ -60,7 +63,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void inversionTest(){
+    public void inversionTest() {
         Population sample = getSamplePopulation();
         System.out.println(sample.getIndivs().get(0).toString());
         sample.tryMutation(0, 1.0, MutationType.INV);
@@ -68,19 +71,19 @@ public class UtilsTest {
     }
 
     @Test
-    public void orderCrossTest(){
+    public void orderCrossTest() {
         Population sample = getSamplePopulation();
         sample.tryCrossover(sample, 0, 1, 1.0, CrossoverType.ORDER);
     }
 
     @Test
-    public void tabuListInsertTest(){
+    public void tabuListInsertTest() {
         TabuList hood = new TabuList(3);
-        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(1,2,3,4,5));
-        ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(2,3,4,5,1));
-        ArrayList<Integer> list3 = new ArrayList<>(Arrays.asList(3,4,5,1,2));
-        ArrayList<Integer> list4 = new ArrayList<>(Arrays.asList(4,5,1,2,3));
-        ArrayList<Integer> list5 = new ArrayList<>(Arrays.asList(5,1,2,3,4));
+        ArrayList<Integer> list = new ArrayList<>(Arrays.asList(1, 2, 3, 4, 5));
+        ArrayList<Integer> list2 = new ArrayList<>(Arrays.asList(2, 3, 4, 5, 1));
+        ArrayList<Integer> list3 = new ArrayList<>(Arrays.asList(3, 4, 5, 1, 2));
+        ArrayList<Integer> list4 = new ArrayList<>(Arrays.asList(4, 5, 1, 2, 3));
+        ArrayList<Integer> list5 = new ArrayList<>(Arrays.asList(5, 1, 2, 3, 4));
         hood.add(new Indiv(list));
         System.out.println(hood.toString());
         hood.add(new Indiv(list2));
@@ -91,5 +94,33 @@ public class UtilsTest {
         System.out.println(hood.toString());
         hood.add(new Indiv(list5));
         System.out.println(hood.toString());
+    }
+
+    @Test
+    public void checkIndiv() {
+        Indiv sample = getIndivFromFile();
+        Assert.assertEquals(5600, sample.getFitness(), 0.5);
+    }
+
+    @Test
+    public void checkMatrix(){
+        System.out.println(TSPProblem.getName());
+//        TSPProblem.displayMatrix();
+    }
+
+    private Indiv getIndivFromFile() {
+        ArrayList<Integer> cities = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("D:\\programy\\metaheurystyki\\tests\\nrw.txt"));
+            String line = reader.readLine();
+            while (!line.equals("EOF")) {
+                cities.add(Integer.parseInt(line));
+                line = reader.readLine();
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new Indiv(cities);
     }
 }

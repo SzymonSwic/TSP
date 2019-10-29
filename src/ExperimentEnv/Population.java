@@ -95,10 +95,15 @@ public class Population {
         }
     }
 
-    public void tryMutation(int indivIndex, double chance, MutationType type) {
+    public Indiv[] getChildren(int parent1, int parent2, double chance, CrossoverType type){
         if (Utils.drawDecision(chance)) {
-            indivs.get(indivIndex).mutation(type);
+            return this.getIndivs().get(parent1).crossover(this.getIndivs().get(parent2), type);
         }
+        return new Indiv[]{this.getIndivs().get(parent1), this.getIndivs().get(parent2)};
+    }
+
+    public void tryMutation(int indivIndex, double chance, MutationType type) {
+        indivs.get(indivIndex).mutation(type, chance);
     }
 
     public Population copy() {
@@ -112,4 +117,31 @@ public class Population {
     public ArrayList<Indiv> getIndivs() {
         return indivs;
     }
+
+    public String toString() {
+        Indiv best = this.indivs.get(0);
+        Indiv worst = this.indivs.get(0);
+        double avg = 0;
+        if (this.indivs.size() > 1) {
+
+            for (Indiv indiv : this.indivs) {
+                if (indiv.compareTo(best) > 0)
+                    best = indiv;
+                else if (indiv.compareTo(worst) < 0)
+                    worst = indiv;
+            }
+            avg = countAvg(this);
+        }
+        return best.getFitness()+" - "+avg+" - "+worst.getFitness();
+    }
+
+    private double countAvg(Population population) {
+        double counter = 0;
+        for (Indiv i : population.getIndivs()) {
+            counter += i.getFitness();
+        }
+        return counter / population.getIndivs().size();
+    }
+
+
 }

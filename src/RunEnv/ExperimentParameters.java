@@ -12,14 +12,14 @@ public class ExperimentParameters {
     public CrossoverType crossoverType;
     public SelectionType selectionType;
 
-    public int neighborsAmount, tabuListSize, searchIterations;
+    public int neighborsAmount, tabuListSize, stopCondition;
 
-    ExperimentParameters(String src, int neighborsAmount, int tabuListSize, int searchIterations) {
+    ExperimentParameters(String src, int neighborsAmount, int tabuListSize, int stopCondition) {
         this.srcFilePath = src;
         this.neighborsAmount = neighborsAmount;
         this.tabuListSize = tabuListSize;
-        this.searchIterations = searchIterations;
-        this.generationsAmount = searchIterations;
+        this.stopCondition = stopCondition;
+        this.generationsAmount = stopCondition;
     }
 
     public ExperimentParameters(String src, int populationSize, int generationsAmount, int tournamentSize, SelectionType selectionType, double px, CrossoverType crossoverType, double pm, MutationType mutationType) {
