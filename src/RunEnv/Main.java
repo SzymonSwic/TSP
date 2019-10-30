@@ -7,7 +7,8 @@ public class Main {
     public static void main(String[] args) {
         ArrayList<ExperimentParameters> parametersList = getExperimentsConfig();
 //        Algorithm algorithm = new Evolutionary();
-        Algorithm algorithm = new TabuSearch();
+//        Algorithm algorithm = new TabuSearch();
+        Algorithm algorithm = new Annealing();
         for(ExperimentParameters singleExperiment: parametersList){
             algorithm.setupNewExperiment(singleExperiment);
             algorithm.runExperimentInLoop(1);
@@ -16,6 +17,19 @@ public class Main {
 
     private static ArrayList<ExperimentParameters> getExperimentsConfig(){
         ArrayList<ExperimentParameters> result = new ArrayList<>();
+
+        String srcFilePath = "TSP/kroA100.tsp";
+        double startTemp = 7.0;
+        double stopTemp = 0.01;
+        double coolingRate = 0.001;
+        int neighbors = 10;
+        result.add(new ExperimentParameters(srcFilePath, startTemp, stopTemp, coolingRate, neighbors));
+
+//        String srcFilePath = "TSP/kroA100.tsp";
+//        int neighborsAmount = 100;
+//        int tabuListSize = 50;
+//        int stopCounter = 500;
+//        result.add(new ExperimentParameters(srcFilePath, neighborsAmount, tabuListSize, stopCounter));
 
 //        //test
 //        int populationSize = 10;
@@ -26,11 +40,7 @@ public class Main {
 //        String srcFilePath = "TSP/berlin11_modified.tsp";
 //        result.add(new ExperimentParameters(populationSize, generationsAmount, tournamentSize, Px, Pm, srcFilePath));
 //
-        String srcFilePath = "TSP/kroA100.tsp";
-        int neighborsAmount = 3000;
-        int tabuListSize = 50;
-        int stopCounter = 1000;
-        result.add(new ExperimentParameters(srcFilePath, neighborsAmount, tabuListSize, stopCounter));
+
 
         //baza
 //        int populationSize = 100;

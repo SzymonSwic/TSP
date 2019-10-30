@@ -30,5 +30,15 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="file://D:/Program Files/Java/xchart-3.5.4" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+        <jarDirectory url="file://D:/Program Files/Java/xchart-3.5.4" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>

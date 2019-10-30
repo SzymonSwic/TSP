@@ -2,6 +2,10 @@ package ExperimentEnv;
 
 import Enums.AlgorithmType;
 import RunEnv.ExperimentParameters;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.XYChart;
+import org.knowm.xchart.XYChartBuilder;
+import org.knowm.xchart.XYSeries;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,14 +19,21 @@ public class RaportCreator {
     private AlgorithmType algorithmFlag;
     private ArrayList<EvolutionScore> evolutionResults;
     private ArrayList<TSScore> TSResults;
+    private ArrayList<SAScore> SAResults;
     private ExperimentParameters experimentData;
     private int populationCounter;
 
     public RaportCreator(AlgorithmType type) {
         this.algorithmFlag = type;
-        switch (algorithmFlag){
-            case EVOLUTION:  this.evolutionResults = new ArrayList<>(); break;
-            case TABU:  this.TSResults = new ArrayList<>();
+        switch (algorithmFlag) {
+            case EVOLUTION:
+                this.evolutionResults = new ArrayList<>();
+                break;
+            case TABU:
+                this.TSResults = new ArrayList<>();
+                break;
+            case ANNEALING:
+                this.SAResults = new ArrayList<>();
         }
     }
 
@@ -37,6 +48,8 @@ public class RaportCreator {
         this.experimentData = params;
         this.populationCounter = 0;
     }
+
+    //  EA
 
     public void loadEvolutionPopulationToBuffer(Population population) {
         this.populationCounter++;
@@ -83,6 +96,7 @@ public class RaportCreator {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        drawChartEA();
         clearEvolutionBuffer();
     }
 
@@ -94,6 +108,11 @@ public class RaportCreator {
                 " pm-" + (Double.toString(experimentData.Pm).replace(".", ",")) +
                 " tour-" + experimentData.tournamentSize +
                 " " + experimentData.selectionType + " " + experimentData.crossoverType + " " + experimentData.mutationType;
+    }
+
+    private void clearEvolutionBuffer() {
+        this.evolutionResults.clear();
+        this.populationCounter = 0;
     }
 
     private class EvolutionScore {
@@ -117,14 +136,12 @@ public class RaportCreator {
     }
 
 
+    //TABU SEARCH
 
 
-
-
-
-    public void loadTSPopulationToBuffer(Indiv searcher, ArrayList<Indiv> neighbors){
+    public void loadTSPopulationToBuffer(Indiv searcher, Indiv best, ArrayList<Indiv> neighbors) {
         this.populationCounter++;
-        TSResults.add(getTSScores(searcher, neighbors));
+        TSResults.add(getTSScores(searcher, best, neighbors));
 //        if (this.populationCounter > experimentData.generationsAmount) {
 //            this.populationCounter -= experimentData.generationsAmount;
 //            TSResults.set(populationCounter, updateTSScore(TSResults.get(populationCounter), getTSScores(searcher, neighbors)));
@@ -133,17 +150,18 @@ public class RaportCreator {
 //        }
     }
 
-    private TSScore getTSScores(Indiv searcher, ArrayList<Indiv> neighbors){
+    private TSScore getTSScores(Indiv searcher, Indiv best, ArrayList<Indiv> neighbors) {
         Indiv worst = neighbors.get(0);
-        for(Indiv ind: neighbors){
-            if(ind.compareTo(worst) < 0)
+        for (Indiv ind : neighbors) {
+            if (ind.compareTo(worst) < 0)
                 worst = ind;
         }
-        return new TSScore(this.populationCounter, searcher.getFitness(), worst.getFitness());
+//        System.out.println(searcher.toString());
+        return new TSScore(this.populationCounter, searcher.getFitness(), best.getFitness(), worst.getFitness());
     }
 
     private TSScore updateTSScore(TSScore oldScore, TSScore newScore) {
-        oldScore.searcherScore = (oldScore.searcherScore + newScore.searcherScore) / 2;
+        oldScore.neighborScore = (oldScore.neighborScore + newScore.neighborScore) / 2;
         oldScore.worstScore = (oldScore.worstScore + newScore.worstScore) / 2;
         return oldScore;
     }
@@ -151,7 +169,7 @@ public class RaportCreator {
     public void createTSResultFile() {
         File file = new File("results/" + getTSRaportName() + ".csv");
         try (PrintWriter pw = new PrintWriter(file)) {
-            pw.println("nr, searcher, worst");
+            pw.println("nr, bestNeighbor, best, worst");
             this.TSResults
                     .stream()
                     .map(TSScore::toString)
@@ -159,44 +177,111 @@ public class RaportCreator {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        drawChartTS();
         clearTSBuffer();
     }
 
     private String getTSRaportName() {
         return experimentData.srcFilePath.substring(4, experimentData.srcFilePath.indexOf(".")) +
                 " neighbors- " + experimentData.neighborsAmount +
-                " tabuSize- " + experimentData.tabuListSize;
-    }
-
-    private class TSScore {
-        int popNumber;
-        double searcherScore, worstScore;
-
-        public TSScore(int popNumber, double searcherScore, double worstScore) {
-            this.popNumber = popNumber;
-            this.searcherScore = searcherScore;
-            this.worstScore = worstScore;
-        }
-
-        public String toString() {
-            String searcher = String.format(Locale.US, "%.2f", this.searcherScore);
-            String worst = String.format(Locale.US, "%.2f", this.worstScore);
-
-            return this.popNumber + ", " + searcher + ", " + worst;
-        }
-    }
-
-
-
-
-    private void clearEvolutionBuffer() {
-        this.evolutionResults.clear();
-        this.populationCounter = 0;
+                " tabuSize- " + experimentData.tabuListSize +
+                " stopCondition- " + experimentData.stopCondition;
     }
 
     private void clearTSBuffer() {
         this.TSResults.clear();
         this.populationCounter = 0;
+    }
+
+    private class TSScore {
+        int popNumber;
+        double neighborScore, bestScore, worstScore;
+
+        public TSScore(int popNumber, double neighborScore, double bestScore, double worstScore) {
+            this.popNumber = popNumber;
+            this.neighborScore = neighborScore;
+            this.worstScore = worstScore;
+            this.bestScore = bestScore;
+        }
+
+        public String toString() {
+            String searcher = String.format(Locale.US, "%.2f", this.neighborScore);
+            String best = String.format(Locale.US, "%.2f", this.bestScore);
+            String worst = String.format(Locale.US, "%.2f", this.worstScore);
+
+            if (this.bestScore == this.neighborScore)
+                return this.popNumber + "," + searcher + "," + best + "," + worst;
+            return this.popNumber + "," + searcher + "," + "," + worst;
+
+
+        }
+    }
+
+    //      SA
+
+    public void loadSAPopulationToBuffer(double temp, Indiv searcher, Indiv best, ArrayList<Indiv> neighbors) {
+        this.populationCounter++;
+        SAResults.add(getSAScores(temp, searcher, best, neighbors));
+    }
+
+    private SAScore getSAScores(double temp, Indiv searcher, Indiv best, ArrayList<Indiv> neighbors) {
+        Indiv worst = neighbors.get(0);
+        for (Indiv ind : neighbors) {
+            if (ind.compareTo(worst) < 0)
+                worst = ind;
+        }
+//        System.out.println(searcher.toString());
+        return new SAScore(temp, searcher.getFitness(), best.getFitness(), worst.getFitness());
+    }
+
+    public void createSAResultFile() {
+        File file = new File("results/" + getSARaportName() + ".csv");
+        try (PrintWriter pw = new PrintWriter(file)) {
+            pw.println("nr, bestNeighbor, best, worst");
+            this.SAResults
+                    .stream()
+                    .map(SAScore::toString)
+                    .forEach(pw::println);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        drawChartSA();
+        clearSABuffer();
+    }
+
+    private String getSARaportName() {
+        return experimentData.srcFilePath.substring(4, experimentData.srcFilePath.indexOf(".")) +
+                " temp start - " + experimentData.startTemperature +
+                " temp stop - " + experimentData.stopTemperature +
+                " coolingRate - " + experimentData.coolingRate;
+    }
+
+    private void clearSABuffer() {
+        this.SAResults.clear();
+        this.populationCounter = 0;
+    }
+
+    private class SAScore {
+        double temperature;
+        double neighborScore, bestScore, worstScore;
+
+        public SAScore(double popNumber, double neighborScore, double bestScore, double worstScore) {
+            this.temperature = popNumber;
+            this.neighborScore = neighborScore;
+            this.worstScore = worstScore;
+            this.bestScore = bestScore;
+        }
+
+        public String toString() {
+            String temperature = String.format(Locale.US, "%.2f", this.temperature);
+            String searcher = String.format(Locale.US, "%.2f", this.neighborScore);
+            String best = String.format(Locale.US, "%.2f", this.bestScore);
+            String worst = String.format(Locale.US, "%.2f", this.worstScore);
+
+            if (this.bestScore == this.neighborScore)
+                return temperature + "," + searcher + "," + best + "," + worst;
+            return temperature + "," + searcher + "," + "," + worst;
+        }
     }
 
     private double countAvg(Population population) {
@@ -206,4 +291,72 @@ public class RaportCreator {
         }
         return counter / population.getIndivs().size();
     }
+
+
+    private void drawChartSA(){
+        ArrayList<Integer> iters = new ArrayList<>();
+        ArrayList<Double> neighbors = new ArrayList<>();
+        ArrayList<Double> bests = new ArrayList<>();
+        ArrayList<Double> worsts = new ArrayList<>();
+        int counter = 1;
+        for(SAScore score: SAResults){
+            iters.add(counter);
+            counter++;
+            neighbors.add(score.neighborScore);
+            bests.add(score.bestScore);
+            worsts.add(score.worstScore);
+        }
+        XYChart chart = new XYChartBuilder().width(1800).height(900).build();
+        chart.getStyler().getDecimalPattern();
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
+        chart.getStyler().setChartTitleVisible(false);
+        chart.getStyler().setMarkerSize(3);
+        chart.addSeries("Best Neighbor", iters, neighbors);
+        chart.addSeries("Best", iters, bests);
+        chart.addSeries("Worst", iters, worsts);
+        new SwingWrapper(chart).displayChart();
+    }
+
+    private void drawChartTS(){
+        ArrayList<Integer> iters = new ArrayList<>();
+        ArrayList<Double> neighbors = new ArrayList<>();
+        ArrayList<Double> bests = new ArrayList<>();
+        ArrayList<Double> worsts = new ArrayList<>();
+        for(TSScore score: TSResults){
+            iters.add(score.popNumber);
+            neighbors.add(score.neighborScore);
+            bests.add(score.bestScore);
+            worsts.add(score.worstScore);
+        }
+        XYChart chart = new XYChartBuilder().width(1800).height(900).build();
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
+        chart.getStyler().setChartTitleVisible(false);
+        chart.getStyler().setMarkerSize(3);
+        chart.addSeries("Best Neighbor", iters, neighbors);
+        chart.addSeries("Best", iters, bests);
+        chart.addSeries("Worst", iters, worsts);
+        new SwingWrapper(chart).displayChart();
+    }
+
+    private void drawChartEA(){
+        ArrayList<Integer> iters = new ArrayList<>();
+        ArrayList<Double> bests = new ArrayList<>();
+        ArrayList<Double> avgs = new ArrayList<>();
+        ArrayList<Double> worsts = new ArrayList<>();
+        for(EvolutionScore score: evolutionResults){
+            iters.add(score.popNumber);
+            bests.add(score.bestScore);
+            avgs.add(score.avgScore);
+            worsts.add(score.worstScore);
+        }
+        XYChart chart = new XYChartBuilder().width(1800).height(900).build();
+        chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
+        chart.getStyler().setChartTitleVisible(false);
+        chart.getStyler().setMarkerSize(3);
+        chart.addSeries("Best", iters, bests);
+        chart.addSeries("Avg", iters, avgs);
+        chart.addSeries("Worst", iters, worsts);
+        new SwingWrapper(chart).displayChart();
+    }
 }
+

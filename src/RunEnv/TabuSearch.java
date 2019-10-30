@@ -12,7 +12,7 @@ class TabuSearch extends Algorithm {
 
     private TabuList tabuList;
 
-    public TabuSearch(){
+    public TabuSearch() {
         super(AlgorithmType.TABU);
     }
 
@@ -27,48 +27,49 @@ class TabuSearch extends Algorithm {
 
     @Override
     void run() {
+        System.out.println("Tabu Search start");
         tabuList = new TabuList(parameters.tabuListSize);
         int badNeighborsCounter = 0;
 
         this.currPopulation = new Population(1);
-        ArrayList<Indiv> neighbors = getNeighbors();
-        raport.loadTSPopulationToBuffer(getSercher(), neighbors); //init random first searcher
+        ArrayList<Indiv> neighbors;
+        Indiv bestNeighbor = getSercher(); //init random first searcher
 
         while (badNeighborsCounter < parameters.stopCondition) {
-            neighbors = getNeighbors();
-            Indiv nextSearcher = getBestNeighbor(neighbors);
+            neighbors = getNeighbors(bestNeighbor);
+            bestNeighbor = getBestNeighbor(neighbors);
 
-            if(nextSearcher.compareTo(getSercher()) > 0){
-                this.currPopulation.getIndivs().set(0, nextSearcher);
-                this.tabuList.add(nextSearcher);
-                raport.loadTSPopulationToBuffer(getSercher(), neighbors);
-
+            if (bestNeighbor.getFitness() < getSercher().getFitness()) {
+                this.currPopulation.getIndivs().set(0, bestNeighbor);
                 badNeighborsCounter = 0;
-            }
-            if (nextSearcher.compareTo(getSercher()) < 0)
+            } else {
                 badNeighborsCounter++;
+            }
 
-            if(badNeighborsCounter == parameters.stopCondition/2)
+            this.tabuList.add(bestNeighbor);
+            raport.loadTSPopulationToBuffer(bestNeighbor, getSercher(), neighbors);
+
+            if (badNeighborsCounter == parameters.stopCondition / 2)
                 System.out.println("No progress 50%");
         }
     }
 
     private Indiv getBestNeighbor(ArrayList<Indiv> candidates) {
         Indiv best = candidates.get(0);
-        for (int i = 1; i < candidates.size(); i++) {
+        for (int i = 0; i < candidates.size(); i++) {
             if (candidates.get(i).compareTo(best) > 0)
                 best = candidates.get(i);
         }
         return best;
     }
 
-    private ArrayList<Indiv> getNeighbors() {
+    private ArrayList<Indiv> getNeighbors(Indiv bestIndiv) {
         ArrayList<Indiv> result = new ArrayList<>();
         int emergencyCounter = 0;
         while (result.size() < parameters.neighborsAmount && emergencyCounter < parameters.neighborsAmount * 3) {
-            Indiv newNeighbor = getNeighbor(getSercher());
+            Indiv newNeighbor = getNeighbor(bestIndiv);
             if (!isTabu(newNeighbor))
-                result.add(getNeighbor(getSercher()));
+                result.add(getNeighbor(bestIndiv));
             emergencyCounter++;
         }
         return result;
