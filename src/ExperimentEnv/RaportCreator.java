@@ -303,10 +303,16 @@ public class RaportCreator {
             bests.add(score.bestScore);
             worsts.add(score.worstScore);
         }
-        XYChart chart = new XYChartBuilder().width(1800).height(900).build();
+        XYChart chart = new XYChartBuilder().width(1800).height(900)
+                .title(experimentData.srcFilePath +
+                        ", N = " + experimentData.neighborsAmount +
+                        ", Start T = " + experimentData.startTemperature +
+                        ", Stop T = " + experimentData.stopTemperature+
+                        ", Cooling = "+ experimentData.coolingRate)
+                .build();
         chart.getStyler().getDecimalPattern();
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
-        chart.getStyler().setChartTitleVisible(false);
+        chart.getStyler().setChartTitleVisible(true);
         chart.getStyler().setYAxisMin(getChartLimit());
         chart.getStyler().setMarkerSize(3);
         chart.addSeries("Best Neighbor", iters, neighbors);

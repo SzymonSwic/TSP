@@ -26,9 +26,9 @@ public class Main {
 //        result.add(new ExperimentParameters(srcFilePath, startTemp, stopTemp, coolingRate, neighbors));
 
         String srcFilePath = "TSP/kroA200.tsp";
-        int neighborsAmount = 40;
-        int tabuListSize = 50;
-        int stopCounter = 5000;
+        int neighborsAmount = 1000;
+        int tabuListSize = 10;
+        int stopCounter = 2000;
         result.add(new ExperimentParameters(srcFilePath, neighborsAmount, tabuListSize, stopCounter));
 
 //        //test
