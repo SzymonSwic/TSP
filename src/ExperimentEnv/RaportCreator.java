@@ -2,10 +2,7 @@ package ExperimentEnv;
 
 import Enums.AlgorithmType;
 import RunEnv.ExperimentParameters;
-import org.knowm.xchart.SwingWrapper;
-import org.knowm.xchart.XYChart;
-import org.knowm.xchart.XYChartBuilder;
-import org.knowm.xchart.XYSeries;
+import org.knowm.xchart.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -293,13 +290,13 @@ public class RaportCreator {
     }
 
 
-    private void drawChartSA(){
+    private void drawChartSA() {
         ArrayList<Integer> iters = new ArrayList<>();
         ArrayList<Double> neighbors = new ArrayList<>();
         ArrayList<Double> bests = new ArrayList<>();
         ArrayList<Double> worsts = new ArrayList<>();
         int counter = 1;
-        for(SAScore score: SAResults){
+        for (SAScore score : SAResults) {
             iters.add(counter);
             counter++;
             neighbors.add(score.neighborScore);
@@ -310,6 +307,7 @@ public class RaportCreator {
         chart.getStyler().getDecimalPattern();
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
         chart.getStyler().setChartTitleVisible(false);
+        chart.getStyler().setYAxisMin(getChartLimit());
         chart.getStyler().setMarkerSize(3);
         chart.addSeries("Best Neighbor", iters, neighbors);
         chart.addSeries("Best", iters, bests);
@@ -317,33 +315,41 @@ public class RaportCreator {
         new SwingWrapper(chart).displayChart();
     }
 
-    private void drawChartTS(){
+    private void drawChartTS() {
         ArrayList<Integer> iters = new ArrayList<>();
         ArrayList<Double> neighbors = new ArrayList<>();
         ArrayList<Double> bests = new ArrayList<>();
         ArrayList<Double> worsts = new ArrayList<>();
-        for(TSScore score: TSResults){
+        for (TSScore score : TSResults) {
             iters.add(score.popNumber);
             neighbors.add(score.neighborScore);
             bests.add(score.bestScore);
             worsts.add(score.worstScore);
         }
-        XYChart chart = new XYChartBuilder().width(1800).height(900).build();
+
+        XYChart chart = new XYChartBuilder().width(1800).height(900)
+                .title(experimentData.srcFilePath +
+                        ", N = " + experimentData.neighborsAmount +
+                        ", TabuSize = " + experimentData.tabuListSize +
+                        ", Stop = " + experimentData.stopCondition)
+                .build();
+        chart.getStyler().setChartTitleBoxVisible(true);
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
-        chart.getStyler().setChartTitleVisible(false);
+        chart.getStyler().setChartTitleVisible(true);
         chart.getStyler().setMarkerSize(3);
+        chart.getStyler().setYAxisMin(getChartLimit());
         chart.addSeries("Best Neighbor", iters, neighbors);
         chart.addSeries("Best", iters, bests);
         chart.addSeries("Worst", iters, worsts);
         new SwingWrapper(chart).displayChart();
     }
 
-    private void drawChartEA(){
+    private void drawChartEA() {
         ArrayList<Integer> iters = new ArrayList<>();
         ArrayList<Double> bests = new ArrayList<>();
         ArrayList<Double> avgs = new ArrayList<>();
         ArrayList<Double> worsts = new ArrayList<>();
-        for(EvolutionScore score: evolutionResults){
+        for (EvolutionScore score : evolutionResults) {
             iters.add(score.popNumber);
             bests.add(score.bestScore);
             avgs.add(score.avgScore);
@@ -357,6 +363,29 @@ public class RaportCreator {
         chart.addSeries("Avg", iters, avgs);
         chart.addSeries("Worst", iters, worsts);
         new SwingWrapper(chart).displayChart();
+    }
+
+    private double getChartLimit() {
+        switch (experimentData.srcFilePath) {
+            case "TSP/berlin11_modified.tsp":
+                return 4038.0;
+            case "TSP/berlin52.tsp":
+                return 7542.0;
+            case "TSP/kroA100.tsp":
+                return 21282.0;
+            case "TSP/kroA150.tsp":
+                return 26524.0;
+            case "TSP/kroA200.tsp":
+                return 29368.0;
+            case "TSP/fl417.tsp":
+                return 11861.0;
+            case "TSP/ali535.tsp":
+                return 202339.0;
+            case "TSP/gr666.tsp":
+                return 294358.0;
+            default:
+                return 0.0;
+        }
     }
 }
 
