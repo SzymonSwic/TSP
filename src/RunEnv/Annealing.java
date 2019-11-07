@@ -6,6 +6,7 @@ import ExperimentEnv.Population;
 import MyUtils.Utils;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Annealing extends Algorithm {
 
@@ -28,20 +29,33 @@ public class Annealing extends Algorithm {
         double deltaTemp = parameters.coolingRate;
         this.currPopulation = new Population(1);
         ArrayList<Indiv> neighbors;
-        //init random first searcher
+        Indiv bestEver = getSercher();
+        int iterCounter = 0;
+        //init random first searcher0
 
         while (currTemperature > parameters.stopTemperature) {
+
             neighbors = getNeighbors();
             Indiv nextSearcher = getBestNeighbor(neighbors);
+
             if (getSercher().getFitness() > nextSearcher.getFitness()) {
                 this.currPopulation.getIndivs().set(0, nextSearcher);
             } else {
-                if (Utils.drawDecision(Math.exp((getSercher().getFitness() - nextSearcher.getFitness() ) / currTemperature))) {
+                Random r = new Random();
+                double pow = (nextSearcher.getFitness() - getSercher().getFitness()) / currTemperature;
+                double exp = Math.exp(pow);
+                double chance = 1.0 / (1.0 + exp);
+                if (r.nextDouble() < chance) {
                     this.currPopulation.getIndivs().set(0, nextSearcher);
                 }
             }
-            raport.loadSAPopulationToBuffer(currTemperature, getSercher(), nextSearcher, neighbors);
-            currTemperature -= currTemperature * deltaTemp;
+            if (bestEver.getFitness() > nextSearcher.getFitness()) {
+                bestEver = nextSearcher.getCopy();
+            }
+            raport.loadSAPopulationToBuffer(currTemperature, nextSearcher, bestEver, neighbors);
+
+            iterCounter++;
+            currTemperature = currTemperature * deltaTemp;
         }
     }
 

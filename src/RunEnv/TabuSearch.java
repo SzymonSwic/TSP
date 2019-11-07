@@ -37,20 +37,23 @@ class TabuSearch extends Algorithm {
 
         while (badNeighborsCounter < parameters.stopCondition) {
             neighbors = getNeighbors(bestNeighbor);
-            bestNeighbor = getBestNeighbor(neighbors);
+            if (!neighbors.isEmpty()) {
+                bestNeighbor = getBestNeighbor(neighbors);
 
-            if (bestNeighbor.getFitness() < getSercher().getFitness()) {
-                this.currPopulation.getIndivs().set(0, bestNeighbor);
-                badNeighborsCounter = 0;
-            } else {
-                badNeighborsCounter++;
+                if (bestNeighbor.getFitness() < getSercher().getFitness()) {
+                    this.currPopulation.getIndivs().set(0, bestNeighbor);
+                    badNeighborsCounter = 0;
+                } else {
+                    badNeighborsCounter++;
+                }
+
+                this.tabuList.add(bestNeighbor);
+                raport.loadTSPopulationToBuffer(bestNeighbor, getSercher(), neighbors);
+
+                if (badNeighborsCounter == parameters.stopCondition / 2)
+                    System.out.println("No progress 50%");
             }
 
-            this.tabuList.add(bestNeighbor);
-            raport.loadTSPopulationToBuffer(bestNeighbor, getSercher(), neighbors);
-
-            if (badNeighborsCounter == parameters.stopCondition / 2)
-                System.out.println("No progress 50%");
         }
     }
 

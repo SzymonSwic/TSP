@@ -292,6 +292,7 @@ public class RaportCreator {
 
     private void drawChartSA() {
         ArrayList<Integer> iters = new ArrayList<>();
+        ArrayList<Double> tempers = new ArrayList<>();
         ArrayList<Double> neighbors = new ArrayList<>();
         ArrayList<Double> bests = new ArrayList<>();
         ArrayList<Double> worsts = new ArrayList<>();
@@ -302,22 +303,24 @@ public class RaportCreator {
             neighbors.add(score.neighborScore);
             bests.add(score.bestScore);
             worsts.add(score.worstScore);
+            tempers.add(score.temperature * worsts.get(0)/experimentData.startTemperature);
         }
         XYChart chart = new XYChartBuilder().width(1800).height(900)
                 .title(experimentData.srcFilePath +
                         ", N = " + experimentData.neighborsAmount +
                         ", Start T = " + experimentData.startTemperature +
-                        ", Stop T = " + experimentData.stopTemperature+
-                        ", Cooling = "+ experimentData.coolingRate)
+                        ", Stop T = " + experimentData.stopTemperature +
+                        ", Cooling = " + experimentData.coolingRate)
                 .build();
         chart.getStyler().getDecimalPattern();
         chart.getStyler().setDefaultSeriesRenderStyle(XYSeries.XYSeriesRenderStyle.Line);
         chart.getStyler().setChartTitleVisible(true);
         chart.getStyler().setYAxisMin(getChartLimit());
-        chart.getStyler().setMarkerSize(3);
+        chart.getStyler().setMarkerSize(4);
         chart.addSeries("Best Neighbor", iters, neighbors);
-        chart.addSeries("Best", iters, bests);
-        chart.addSeries("Worst", iters, worsts);
+//        chart.addSeries("Best", iters, bests);
+//        chart.addSeries("Worst", iters, worsts);
+//        chart.addSeries("Temperature", iters, tempers);
         new SwingWrapper(chart).displayChart();
     }
 
