@@ -203,9 +203,9 @@ public class Indiv implements Comparable<Indiv> {
 
     public String toString() {
         StringBuilder builder = new StringBuilder();
-//        for (int i : route) {
-//            builder.append(i).append(" ");
-//        }
+        for (int i : route) {
+            builder.append(i).append(" ");
+        }
         String fitnes = String.format("%.2f", this.getFitness());
         builder.append("- fitness: ").append(fitnes);
         return builder.toString();

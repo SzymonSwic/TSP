@@ -1,6 +1,7 @@
 package RunEnv;
 
 import Enums.AlgorithmType;
+import ExperimentEnv.Indiv;
 import ExperimentEnv.Population;
 import Results.RaportCreator;
 import ExperimentEnv.TSPProblem;
@@ -42,5 +43,9 @@ abstract class Algorithm {
     private void setupExperiment() {
         TSPProblemCreator creator = new TSPProblemCreator(parameters.srcFilePath);
         TSPProblem tspProblem = creator.create();
+    }
+
+    public Indiv getGreedyIndiv(int startCity){
+        return currPopulation.getGreedyIndividual(startCity);
     }
 }

@@ -3,6 +3,7 @@ package RunEnv;
 import Enums.CrossoverType;
 import Enums.MutationType;
 import Enums.SelectionType;
+import ExperimentEnv.TSPProblem;
 
 import java.util.ArrayList;
 
@@ -12,25 +13,27 @@ public class Main {
         ArrayList<ExperimentParameters> parametersList = getExperimentsConfig();
 
         //CHOOSE ALGORITHM TYPE
-//        Algorithm algorithm = new Evolutionary();
+        Algorithm algorithm = new Evolutionary();
 //        Algorithm algorithm = new TabuSearch();
-        Algorithm algorithm = new Annealing();
+//        Algorithm algorithm = new Annealing();
 
         for(ExperimentParameters singleExperiment: parametersList){
             algorithm.setupNewExperiment(singleExperiment);
-            algorithm.runExperimentInLoop(10);
+            algorithm.runExperimentInLoop(1);
+            TSPProblem.displayMatrix();
+            System.out.println(algorithm.getGreedyIndiv(5));
         }
-}
+    }
 
     private static ArrayList<ExperimentParameters> getExperimentsConfig() {
         ArrayList<ExperimentParameters> result = new ArrayList<>();
 
-        String srcFilePath = "TSP/berlin52.tsp";
-        double startTemp = 50000.0;
-        double stopTemp = 0.001;
-        double coolingRate = 0.99996;
-        int neighbors = 1;
-        result.add(new ExperimentParameters(srcFilePath, startTemp, stopTemp, coolingRate, neighbors));
+//        String srcFilePath = "TSP/berlin52.tsp";
+//        double startTemp = 50000.0;
+//        double stopTemp = 0.001;
+//        double coolingRate = 0.99996;
+//        int neighbors = 1;
+//        result.add(new ExperimentParameters(srcFilePath, startTemp, stopTemp, coolingRate, neighbors));
 
 //        String srcFilePath = "TSP/berlin52.tsp";
 //        int neighborsAmount = 20;
@@ -39,14 +42,14 @@ public class Main {
 //        result.add(new ExperimentParameters(srcFilePath, neighborsAmount, tabuListSize, stopCounter));
 
 //        //test
-//        int populationSize = 100;
-//        int generationsAmount = 100;
-//        int tournamentSize = 10;
-//        double Px = 0.6;
-//        double Pm = 0.001;
-//        String srcFilePath = "TSP/berlin52.tsp";
-//        result.add(new ExperimentParameters(srcFilePath, populationSize, generationsAmount, tournamentSize, SelectionType.TOURNAMENT, Px, CrossoverType.PMX, Pm, MutationType.SWAP));
-//
+        int populationSize = 100;
+        int generationsAmount = 100;
+        int tournamentSize = 10;
+        double Px = 0.6;
+        double Pm = 0.001;
+        String srcFilePath = "TSP/berlin11_modified.tsp";
+        result.add(new ExperimentParameters(srcFilePath, populationSize, generationsAmount, tournamentSize, SelectionType.TOURNAMENT, Px, CrossoverType.PMX, Pm, MutationType.SWAP));
+
 
 
         //baza
