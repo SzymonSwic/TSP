@@ -7,7 +7,12 @@ import ExperimentEnv.TSPProblem;
 
 import java.util.ArrayList;
 
+//TODO wyswietlanie parametrow + w ts i sa tylko sredni best z odchyleniem
+//TODO odchylenie standarowe
+//TODO znalezc dobre parametry
 public class Main {
+
+    public static int iterations = 10;
 
     public static void main(String[] args) {
         ArrayList<ExperimentParameters> parametersList = getExperimentsConfig();
@@ -17,11 +22,15 @@ public class Main {
 //        Algorithm algorithm = new TabuSearch();
 //        Algorithm algorithm = new Annealing();
 
-        for(ExperimentParameters singleExperiment: parametersList){
-            algorithm.setupNewExperiment(singleExperiment);
-            algorithm.runExperimentInLoop(1);
-            TSPProblem.displayMatrix();
-            System.out.println(algorithm.getGreedyIndiv(5));
+        algorithm.setupNewExperiment(parametersList.get(0));
+//        TSPProblem.displayMatrix();
+
+        System.out.println("Greedy: " + algorithm.getGreedyResults(iterations * 5));
+        System.out.println("Random: " + algorithm.getRandomResults(iterations * 5));
+
+        for (ExperimentParameters experimentParameters : parametersList) {
+            algorithm.runExperimentInLoop(iterations);
+            algorithm.setupNewExperiment(experimentParameters);
         }
     }
 
@@ -42,14 +51,13 @@ public class Main {
 //        result.add(new ExperimentParameters(srcFilePath, neighborsAmount, tabuListSize, stopCounter));
 
 //        //test
-        int populationSize = 100;
-        int generationsAmount = 100;
+        int populationSize = 500;
+        int generationsAmount = 2000;
         int tournamentSize = 10;
         double Px = 0.6;
-        double Pm = 0.001;
-        String srcFilePath = "TSP/berlin11_modified.tsp";
+        double Pm = 0.005;
+        String srcFilePath = "TSP/kroA200.tsp";
         result.add(new ExperimentParameters(srcFilePath, populationSize, generationsAmount, tournamentSize, SelectionType.TOURNAMENT, Px, CrossoverType.PMX, Pm, MutationType.SWAP));
-
 
 
         //baza
