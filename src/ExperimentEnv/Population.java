@@ -5,6 +5,7 @@ import Enums.CrossoverType;
 import Enums.MutationType;
 import Enums.SelectionType;
 
+import javax.lang.model.type.ArrayType;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.stream.Collectors;
@@ -45,35 +46,39 @@ public class Population {
         return best;
     }
 
-    public int getSelectionWinner(int tournamentSize, SelectionType type){
+    public int getSelectionWinner(int tournamentSize, SelectionType type) {
         int result = -1;
-        switch (type){
-            case TOURNAMENT: result = getTournamentWinnerIndex(tournamentSize); break;
-            case ROULETTE: result = getRouletteWinnerIndex(); break;
+        switch (type) {
+            case TOURNAMENT:
+                result = getTournamentWinnerIndex(tournamentSize);
+                break;
+            case ROULETTE:
+                result = getRouletteWinnerIndex();
+                break;
         }
         return result;
     }
 
-    public int getTournamentWinnerIndex(int tournamentSize) {
+    private int getTournamentWinnerIndex(int tournamentSize) {
         return indivs.indexOf(selecionTournament(tournamentSize));
     }
 
-    public int getRouletteWinnerIndex(){
+    private int getRouletteWinnerIndex() {
         return indivs.indexOf(selectionRoulette());
     }
 
-    public Indiv selectionRoulette() {
+    private Indiv selectionRoulette() {
         double sum = getFitnessSum();
         double divider = 0;
         double[] ranges = new double[indivs.size()];
         for (int i = 0; i < ranges.length; i++) {
-            double chance = 1 - (indivs.get(i).getFitness()/sum);
+            double chance = 1 - (indivs.get(i).getFitness() / sum);
             divider += chance;
             ranges[i] = divider;
         }
         double rouletteSpin = Utils.getRandomDoubleInRange(0, divider);
         int counter = 0;
-        while(ranges[counter] <= rouletteSpin){
+        while (ranges[counter] <= rouletteSpin) {
             counter++;
         }
         return indivs.get(counter);
@@ -95,7 +100,7 @@ public class Population {
         }
     }
 
-    public Indiv[] getChildren(int parent1, int parent2, double chance, CrossoverType type){
+    public Indiv[] getChildren(int parent1, int parent2, double chance, CrossoverType type) {
         if (Utils.drawDecision(chance)) {
             return this.getIndivs().get(parent1).crossover(this.getIndivs().get(parent2), type);
         }
@@ -132,7 +137,7 @@ public class Population {
             }
             avg = countAvg(this);
         }
-        return best.getFitness()+" - "+avg+" - "+worst.getFitness();
+        return best.getFitness() + " - " + avg + " - " + worst.getFitness();
     }
 
     private double countAvg(Population population) {
@@ -141,6 +146,56 @@ public class Population {
             counter += i.getFitness();
         }
         return counter / population.getIndivs().size();
+    }
+
+    public Indiv getGreedyIndividual(int startCity) {
+        ArrayList<Integer> result = new ArrayList<>();
+        ArrayList<CityDistance> currCityNearestsList;
+        result.add(startCity);
+        for (int i = 0; i < TSPProblem.getDimensions() - 1; i++) {
+            currCityNearestsList = getNearestCitiesList(result.get(result.size() - 1));
+            int tmpItr = 0;
+            boolean added = false;
+            while (!added) {
+                if (result.contains(currCityNearestsList.get(tmpItr).number)) {
+                    tmpItr++;
+                } else {
+                    result.add(currCityNearestsList.get(tmpItr).number);
+                    added = true;
+                }
+            }
+        }
+        return new Indiv(result);
+    }
+
+    private ArrayList<CityDistance> getNearestCitiesList(int cityNum) {
+        ArrayList<CityDistance> originalDistances = new ArrayList<>();
+
+        for (int i = 0; i < TSPProblem.getDimensions(); i++) {
+            originalDistances.add(new CityDistance(i, TSPProblem.getNeighborhoodMatrix()[cityNum][i]));
+        }
+
+        Collections.sort(originalDistances);
+        return originalDistances;
+    }
+
+    private class CityDistance implements Comparable<CityDistance> {
+        public int number;
+        public double distance;
+
+        public CityDistance(int number, double distance) {
+            this.number = number;
+            this.distance = distance;
+        }
+
+        @Override
+        public int compareTo(CityDistance o) {
+            if (this.distance > o.distance)
+                return 1;
+            else if (this.distance < o.distance)
+                return -1;
+            return 0;
+        }
     }
 
 
