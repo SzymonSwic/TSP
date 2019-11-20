@@ -8,7 +8,6 @@ import MyUtils.Utils;
 import java.util.ArrayList;
 
 class TabuSearch extends Algorithm {
-    //tabu parematers: neighbors size, tabu list size,
 
     private TabuList tabuList;
 
@@ -22,7 +21,7 @@ class TabuSearch extends Algorithm {
             run();
             System.out.println("Experiment " + i + " done.");
         }
-        raport.createTSResultFile();
+        raport.createResultFile();
     }
 
     @Override
@@ -48,13 +47,13 @@ class TabuSearch extends Algorithm {
                 }
 
                 this.tabuList.add(bestNeighbor);
-                raport.loadTSPopulationToBuffer(bestNeighbor, getSercher(), neighbors);
+                raport.loadToBuffer(new Generation(bestNeighbor, getSercher(), neighbors));
 
                 if (badNeighborsCounter == parameters.stopCondition / 2)
                     System.out.println("No progress 50%");
             }
-
         }
+        raport.resetCounter();
     }
 
     private Indiv getBestNeighbor(ArrayList<Indiv> candidates) {
